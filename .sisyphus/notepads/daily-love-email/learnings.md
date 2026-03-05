@@ -5,3 +5,9 @@
 - 后续计划: 增加简单单元测试，确保不同嵌套层级的覆盖行为
 - 2026-03-05: 创建 data/quotes.json，包含200条情话，分布约70甜蜜、70搞笑、60文艺，结构符合计划要求。
   - 验证步骤：Python 读取 data/quotes.json 并统计 quotes 数量，确保总数 >= 200，且分类标签正确。
+
+### Anniversary module learned
+- Implemented src/anniversary.py with get_next_anniversary(anniversaries) to compute the next upcoming yearly anniversary.
+- Recurring yearly anniversaries are supported; returns dict with name, date (YYYY-MM-DD), and days_until.
+- Added tests in tests/test_anniversary.py using monkeypatch to fix today's date for deterministic tests.
+- Patches demonstrate a minimal, immutable approach following the project guidelines.
