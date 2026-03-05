@@ -86,16 +86,16 @@ def load_config_safe():
     # Fallback: environment-based config
     if not cfg:
         cfg = {
-            "to_email": os.environ.get("TO_EMAIL"),
-            "from_email": os.environ.get("FROM_EMAIL"),
-            "smtp_server": os.environ.get("SMTP_SERVER"),
-            "smtp_port": int(os.environ.get("SMTP_PORT", "587")) if os.environ.get("SMTP_PORT") else 587,
-            "smtp_user": os.environ.get("SMTP_USER"),
-            "smtp_password": os.environ.get("SMTP_PASSWORD"),
-            "location": os.environ.get("LOCATION", "") ,
+            "to_email": os.environ.get("EMAIL_RECIPIENT"),
+            "from_email": os.environ.get("EMAIL_SENDER"),
+            "smtp_server": os.environ.get("SMTP_SERVER", "smtp.qq.com"),
+            "smtp_port": int(os.environ.get("SMTP_PORT", "465")) if os.environ.get("SMTP_PORT") else 465,
+            "smtp_user": os.environ.get("EMAIL_SENDER"),
+            "smtp_password": os.environ.get("EMAIL_PASSWORD"),
+            "location": os.environ.get("CITY", ""),
             "sender_name": os.environ.get("SENDER_NAME", "Daily Love"),
             "subject": os.environ.get("EMAIL_SUBJECT", "Daily Love Email"),
-            "start_date": os.environ.get("START_DATE"),
+            "start_date": os.environ.get("LOVE_START_DATE"),
         }
     return cfg
 
