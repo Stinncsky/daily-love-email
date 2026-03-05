@@ -33,27 +33,44 @@
 
 ## 安装与配置
 
-### 第一步：Fork 仓库
+本项目支持两种使用方式，请根据你的需求选择合适的方案。
 
-访问 GitHub 仓库页面，点击右上角的 "Fork" 按钮，将项目复制到你的账户下。
+### 使用方式选择
 
-### 第二步：配置 GitHub Secrets
+| 对比项 | 方案 A：本地运行 | 方案 B：GitHub Actions |
+|--------|-----------------|----------------------|
+| 配置文件 | config.yaml | GitHub Secrets |
+| 运行环境 | 你自己的电脑 | GitHub 服务器 |
+| 触发方式 | 手动执行命令 | 定时自动执行 |
+| 适合场景 | 测试、开发调试 | 长期自动运行 |
 
-进入你的仓库页面，点击 Settings -> Secrets and variables -> Actions，点击 "New repository secret" 按钮，添加以下 Secrets：
+**建议**：
+- 如果你想先测试项目是否正常工作，选择**方案 A**
+- 如果你想让邮件每天自动发送，选择**方案 B**
 
-| Secret 名称 | 说明 | 是否必需 |
-|-------------|------|----------|
-| EMAIL_SENDER | 发件人 QQ 邮箱 | 必需 |
-| EMAIL_PASSWORD | QQ 邮箱授权码 | 必需 |
-| EMAIL_RECIPIENT | 收件人邮箱 | 必需 |
-| WEATHER_API_KEY | OpenWeatherMap API Key | 必需 |
-| LOVE_START_DATE | 恋爱起始日期 (YYYY-MM-DD) | 必需 |
+---
 
-详细的授权码和 API Key 获取方法见下文。
+### 方案 A：本地运行（适合测试）
 
-### 第三步：修改配置文件
+如果你想在本地测试项目是否正常工作，可以使用 config.yaml 配置文件。
 
-复制 `config.yaml.example` 文件，重命名为 `config.yaml`，然后根据你的实际情况修改配置：
+#### 适用场景
+
+- 首次使用想先测试功能
+- 需要在本地开发和调试
+- 不想依赖 GitHub
+
+#### 配置步骤
+
+**第一步：准备配置文件**
+
+复制 `config.yaml.example` 文件，重命名为 `config.yaml`：
+
+```bash
+cp config.yaml.example config.yaml
+```
+
+然后根据你的实际情况修改配置：
 
 ```yaml
 # 邮件配置
@@ -85,9 +102,76 @@ app:
   timezone: "Asia/Shanghai"
 ```
 
-### 第四步：启用 GitHub Actions
+**第二步：安装依赖**
 
-进入仓库的 Actions 页面，点击 "I understand my workflows, go ahead and enable them" 按钮启用 Actions。现在每天零点就会自动发送邮件了。
+```bash
+pip install -r requirements.txt
+```
+
+**第三步：测试运行**
+
+```bash
+# 干运行模式，不发送邮件，只显示邮件内容预览
+python src/main.py --dry-run
+
+# 发送测试邮件到指定邮箱
+python src/main.py --test-email your_test_email@example.com
+```
+
+配置项详细说明见「配置文件说明」章节。
+
+---
+
+### 方案 B：GitHub Actions（适合长期使用）
+
+如果想让邮件每天自动发送，使用 GitHub Secrets 配置会更简单，无需维护电脑开机。
+
+#### 适用场景
+
+- 每天自动发送邮件
+- 不想一直开着电脑
+- 追求完全自动化
+
+#### 配置步骤
+
+**第一步：Fork 仓库**
+
+访问 GitHub 仓库页面，点击右上角的 "Fork" 按钮，将项目复制到你的账户下。
+
+**第二步：配置 GitHub Secrets**
+
+进入你的仓库页面，点击 Settings → Secrets and variables → Actions，点击 "New repository secret" 按钮，添加以下 Secrets：
+
+| Secret 名称 | 说明 | 是否必需 |
+|-------------|------|----------|
+| EMAIL_SENDER | 发件人 QQ 邮箱 | 必需 |
+| EMAIL_PASSWORD | QQ 邮箱授权码 | 必需 |
+| EMAIL_RECIPIENT | 收件人邮箱 | 必需 |
+| WEATHER_API_KEY | OpenWeatherMap API Key | 必需 |
+| LOVE_START_DATE | 恋爱起始日期 (YYYY-MM-DD) | 必需 |
+| CITY | 目标城市（英文） | 必需 |
+
+详细的授权码和 API Key 获取方法见下文「GitHub Secrets 详细配置」章节。
+
+**第三步：启用 GitHub Actions**
+
+进入仓库的 Actions 页面，点击 "I understand my workflows, go ahead and enable them" 按钮启用 Actions。
+
+**第四步：手动触发测试**
+
+配置完成后，建议先手动触发一次测试：
+
+1. 进入仓库的 "Actions" 页面
+2. 找到 "Daily Love Email" 工作流
+3. 点击 "Run workflow" → "Run workflow"
+4. 等待几秒钟，刷新页面查看运行状态
+5. 点击运行记录查看详情，确认无报错
+
+现在每天零点就会自动发送邮件了。
+
+> 详细的 Secrets 配置说明、授权码获取方法、常见问题排查，请参阅 [.github/secrets_template.md](./.github/secrets_template.md)。
+
+---
 
 ## GitHub Secrets 详细配置
 
@@ -181,17 +265,9 @@ requirements.txt 文件包含以下依赖：
 - pyyaml：用于解析配置文件
 - jinja2：用于渲染邮件模板
 
-### 配置本地环境变量
+### 配置本地环境
 
-在项目根目录下创建一个 `.env` 文件，内容如下：
-
-```bash
-FROM_EMAIL=your_qq_email@qq.com
-SMTP_PASSWORD=your_auth_code
-TO_EMAIL=partner@example.com
-WEATHER_API_KEY=your_openweathermap_api_key
-START_DATE=2023-01-01
-```
+本地运行使用 `config.yaml` 配置文件，详细配置步骤见「方案 A：本地运行」章节。
 
 ### 本地测试运行
 
