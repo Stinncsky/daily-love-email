@@ -1,0 +1,27 @@
+# 邮件配置
+email:
+  sender: "your_qq_email@qq.com"  # 发件人QQ邮箱
+  password: "your_auth_code"       # QQ邮箱授权码（不是登录密码）
+  recipient: "partner@example.com" # 收件人邮箱
+  smtp_server: "smtp.qq.com"
+  smtp_port: 465
+
+# 恋爱信息
+love:
+  start_date: "2023-01-01"  # 恋爱起始日期 YYYY-MM-DD
+  
+# 纪念日列表
+anniversaries:
+  - name: "恋爱纪念日"
+    date: "01-01"  # MM-DD格式，每年重复
+  - name: "TA的生日"
+    date: "12-25"  # MM-DD格式
+    
+# 天气配置
+weather:
+  city: "Beijing"  # 城市名称（英文）
+  api_key: "your_openweathermap_api_key"
+
+# 其他配置
+app:
+  timezone: "Asia/Shanghai"
