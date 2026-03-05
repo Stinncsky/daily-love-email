@@ -102,17 +102,22 @@ def render_email(context: dict) -> str:
     """
     import datetime
     
+    # 直接使用 context 中的值，不再重新计算
     days = context.get("days_together", 0)
+    months = context.get("months_together", 0)
+    years = context.get("years_together", 0)
     
     # Build data dict for render_email_with_data
     data = {
         "days_together": days,
-        "months_together": days // 30 if days else 0,
-        "years_together": days // 365 if days else 0,
+        "months_together": months,
+        "years_together": years,
         "quote": context.get("quote", {"content": "", "category": ""}),
         "weather": context.get("weather"),
         "next_anniversary": context.get("anniversary"),
         "today": context.get("date", datetime.date.today().isoformat()),
+        "sender_name": context.get("sender_name", ""),
+        "recipient_name": context.get("recipient_name", ""),
     }
     
     return render_email_with_data(data)

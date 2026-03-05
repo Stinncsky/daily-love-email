@@ -85,15 +85,25 @@ def load_config_safe():
             cfg = {}
     # Fallback: environment-based config
     if not cfg:
+        # Nested structure as per plan
         cfg = {
-            "to_email": os.environ.get("EMAIL_RECIPIENT"),
-            "from_email": os.environ.get("EMAIL_SENDER"),
-            "smtp_server": os.environ.get("SMTP_SERVER", "smtp.qq.com"),
-            "smtp_port": int(os.environ.get("SMTP_PORT", "465")) if os.environ.get("SMTP_PORT") else 465,
-            "smtp_user": os.environ.get("EMAIL_SENDER"),
-            "smtp_password": os.environ.get("EMAIL_PASSWORD"),
-            "location": os.environ.get("CITY", ""),
-            "sender_name": os.environ.get("SENDER_NAME", "Daily Love"),
+            "email": {
+                "recipient": os.environ.get("EMAIL_RECIPIENT"),
+                "sender": os.environ.get("EMAIL_SENDER"),
+                "password": os.environ.get("EMAIL_PASSWORD"),
+                "smtp_server": os.environ.get("SMTP_SERVER", "smtp.qq.com"),
+                "smtp_port": int(os.environ.get("SMTP_PORT", "465")) if os.environ.get("SMTP_PORT") else 465,
+                "sender_name": os.environ.get("SENDER_NAME", "Daily Love"),
+                "recipient_name": os.environ.get("RECIPIENT_NAME", ""),
+            },
+            "weather": {
+                "city": os.environ.get("CITY", ""),
+                "api_key": os.environ.get("WEATHER_API_KEY"),
+            },
+            "love": {
+                "start_date": os.environ.get("LOVE_START_DATE"),
+            },
+            "anniversaries": [],
             "subject": os.environ.get("EMAIL_SUBJECT", "Daily Love Email"),
             "start_date": os.environ.get("LOVE_START_DATE"),
         }
@@ -118,14 +128,19 @@ def safe_call(func, *args, **kwargs):
         return None
 
 
-def build_context(cfg, days, weather, quote, anniversary):
+def build_context(cfg, days, months, years, weather, quote, anniversary):
+    email_cfg = cfg.get("email", {})
     return {
         "config": cfg,
         "days_together": days,
+        "months_together": months,
+        "years_together": years,
         "weather": weather,
         "quote": quote,
         "anniversary": anniversary,
         "date": date.today().isoformat(),
+        "sender_name": email_cfg.get("sender_name", ""),
+        "recipient_name": email_cfg.get("recipient_name", ""),
     }
 
 
@@ -145,18 +160,32 @@ def main():
         return 1
 
     
-    days = safe_call(calculate_days_together, cfg.get("start_date"), date.today())
-    weather = safe_call(get_weather, cfg.get("location", ""))
+    # Fix 1: unpack days/months/years from calculate_days_together
+    calc_result = safe_call(calculate_days_together, cfg.get("love", {}).get("start_date"))
+    if isinstance(calc_result, tuple) and len(calc_result) == 3:
+        days, months, years = calc_result
+    else:
+        days, months, years = 0, 0, 0
+
+    # Fix 2 & 6: weather call uses nested config, and proper city selection
+    weather_cfg = cfg.get("weather", {})
+    city = weather_cfg.get("city") or cfg.get("weather", {}).get("city") or cfg.get("location", "")
+    api_key = weather_cfg.get("api_key")
+    weather = safe_call(get_weather, city, api_key) if city else None
+
     quote = safe_call(get_random_quote)
-    anniversary = safe_call(get_next_anniversary, cfg)
+    # Fix 3: anniversaries from nested config
+    anniversaries_list = cfg.get("anniversaries", [])
+    anniversary = safe_call(get_next_anniversary, anniversaries_list) if anniversaries_list else None
 
     
-    context = build_context(cfg, days, weather, quote, anniversary)
+    # Fix 4/5: build_context now accepts months and years, and updated call site
+    context = build_context(cfg, days, months, years, weather, quote, anniversary)
     body = render_email(context) if callable(render_email) else ""
 
     
-    recipient = test_email or cfg.get("to_email")
-    subject = cfg.get("subject", "Daily Love Email")
+    recipient = test_email or cfg.get("email", {}).get("recipient")
+    subject = cfg.get("email", {}).get("subject", cfg.get("subject", "Daily Love Email"))
 
     if not recipient:
         log.error("No recipient email configured (TO_EMAIL). Aborting.")
@@ -178,7 +207,7 @@ def main():
     try:
         summary_line = (
             f"{date.today().isoformat()} | dry_run={dry_run} | to={recipient} | "
-            f"days={days} | weather={weather} | quote={quote} | anniversary={anniversary}"
+            f"days={days} | months={months} | years={years} | weather={weather} | quote={quote} | anniversary={anniversary}"
         )
         append_learning_log(summary_line)
     except Exception as e:

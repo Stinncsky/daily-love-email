@@ -13,7 +13,7 @@ def get_weather(city: str, api_key: Optional[str] = None) -> Optional[Dict[str, 
       - wind_speed (float): wind speed in m/s
     Returns None if any error occurs or required data is missing.
     """
-    key = api_key or os.environ.get("OPENWEATHER_API_KEY")
+    key = api_key or os.environ.get("WEATHER_API_KEY") or os.environ.get("OPENWEATHER_API_KEY")
     if not key:
         return None
     url = "https://api.openweathermap.org/data/2.5/weather"
