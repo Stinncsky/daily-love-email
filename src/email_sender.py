@@ -50,7 +50,11 @@ def send_email(config: dict, subject: str, html_content: str, to: Optional[str] 
             logging.error("send_email: 发件人邮箱格式无效: %s", from_email)
             return False
 
-        logging.info("send_email: 发件人邮箱=%s, sender_name=%s", from_email, sender_name)
+        logging.info("send_email: 发件人邮箱=%s, sender_name=%s, smtp_user=%s", from_email, sender_name, smtp_user)
+
+        if not smtp_user:
+            logging.error("send_email: SMTP 用户名未配置 (EMAIL_SENDER)")
+            return False
 
         recipient = to if to else (email_cfg.get("recipient") or config.get("to_email"))
         if not recipient:
