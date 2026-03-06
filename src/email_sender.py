@@ -41,6 +41,10 @@ def send_email(config: dict, subject: str, html_content: str, to: Optional[str] 
         from_email = email_cfg.get("sender") or config.get("from_email") or smtp_user
         sender_name = email_cfg.get("sender_name") or config.get("sender_name", "")
 
+        if not from_email:
+            logging.error("send_email: 发件人邮箱未配置 (EMAIL_SENDER 或 from_email)")
+            return False
+
         recipient = to if to else (email_cfg.get("recipient") or config.get("to_email"))
         if not recipient:
             logging.error("send_email: 收件人邮箱未指定（参数 to 未提供且 config 中也没有 to_email）")
