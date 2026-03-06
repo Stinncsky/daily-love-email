@@ -1,0 +1,25 @@
+# 场景1: 默认样式测试（不配置卡片背景）
+email:
+  sender: "test@example.com"
+  password: "test"
+  recipient: "partner@example.com"
+  smtp_server: "smtp.example.com"
+  smtp_port: 465
+  sender_name: "测试"
+  recipient_name: "伴侣"
+
+love:
+  start_date: "2023-01-01"
+
+anniversaries: []
+
+weather:
+  city: "Beijing"
+  api_key: "test_key"
+
+app:
+  timezone: "Asia/Shanghai"
+  template: "email_new"
+  background_type: "gradient"
+  background_image: "romantic"
+  # 不配置 card_background_type 和 card_background_value，测试默认值

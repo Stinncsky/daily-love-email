@@ -41,7 +41,11 @@
 |-------------|------|--------|------|
 | SMTP_SERVER | SMTP 服务器地址 | smtp.qq.com | `smtp.qq.com` |
 | SMTP_PORT | SMTP 端口号 | 465 | `465` |
-| SENDER_NAME | 发件人显示名称 | 空（使用邮箱） | `亲爱的老公` |
+| SENDER_NAME | 发件人显示称呼 | 空（使用邮箱） | `亲爱的老公` |
+| RECIPIENT_NAME | 收件人显示称呼 | 空（不显示） | `老婆` |
+| ANNIVERSARIES | 纪念日配置（JSON格式） | 空（不显示纪念日） | `[{"name": "恋爱纪念日", "date": "01-01"}]` |
+| CARD_BACKGROUND_TYPE | 邮件主卡片背景类型 | solid | `solid` |
+| CARD_BACKGROUND_VALUE | 邮件主卡片背景值 | rgba(255, 255, 255, 0.6) | `rgba(255, 255, 255, 0.6)` |
 
 ## 配置步骤
 
@@ -245,6 +249,102 @@ on:
 | `smtplib.SMTPServerDisconnected` | SMTP 服务未开启 |
 | `requests.exceptions.HTTPError 401` | API Key 无效 |
 | `requests.exceptions.HTTPError 404` | 城市名称错误 |
+
+## 纪念日配置
+
+纪念日功能可以在邮件中显示即将到来的重要纪念日提醒。
+
+### 配置方法
+
+在 GitHub Secrets 中添加 `ANNIVERSARIES`，值为 JSON 格式字符串：
+
+```json
+[
+  {"name": "恋爱纪念日", "date": "01-01"},
+  {"name": "TA的生日", "date": "12-25"}
+]
+```
+
+### 格式说明
+
+- **name**: 纪念日名称，会显示在邮件中
+- **date**: 日期格式为 MM-DD（月-日），每年自动重复
+- 可以添加多个纪念日，用逗号分隔
+
+### 配置示例
+
+**单纪念日：**
+```
+[{"name": "恋爱纪念日", "date": "05-20"}]
+```
+
+**多纪念日：**
+```
+[{"name": "恋爱纪念日", "date": "01-01"}, {"name": "TA的生日", "date": "08-15"}, {"name": "第一次约会", "date": "12-24"}]
+```
+
+### 注意事项
+
+1. 日期必须使用 MM-DD 格式（两位月份-两位日期）
+2. JSON 字符串中的引号必须是英文双引号 `"`
+3. 如果不需要显示纪念日，可以留空或不配置此项
+4. 系统会自动计算距离下一个纪念日的天数并在邮件中显示
+
+## 卡片背景配置
+
+邮件主卡片背景支持三种类型：纯色、渐变和图片。
+
+### CARD_BACKGROUND_TYPE
+
+**说明**: 邮件主卡片背景类型
+
+**可选值**:
+- `solid` - 纯色背景（默认）
+- `gradient` - 渐变背景
+- `image` - 图片背景
+
+**示例**: `solid`
+
+**必需**: 否（默认为 solid）
+
+---
+
+### CARD_BACKGROUND_VALUE
+
+**说明**: 邮件主卡片背景值
+
+**格式**:
+- solid 类型: 颜色代码，如 `#FFE4E1` 或 `rgba(255,255,255,0.8)`
+- gradient 类型: 渐变色，如 `linear-gradient(135deg, #FFE4E1 0%, #FFF0F5 100%)`
+- image 类型: 图片文件名（不含扩展名），如 `card_bg`
+
+**示例**: `rgba(255, 255, 255, 0.6)`
+
+**必需**: 否（默认为半透明白色）
+
+**注意**: 图片会自动使用 cover 模式填满整个卡片容器
+
+### 配置示例
+
+**纯色背景**:
+```
+CARD_BACKGROUND_TYPE: solid
+CARD_BACKGROUND_VALUE: rgba(255, 255, 255, 0.6)
+```
+
+**渐变背景**:
+```
+CARD_BACKGROUND_TYPE: gradient
+CARD_BACKGROUND_VALUE: linear-gradient(135deg, #FFE4E1 0%, #FFF0F5 100%)
+```
+
+**图片背景**:
+```
+CARD_BACKGROUND_TYPE: image
+CARD_BACKGROUND_VALUE: card_bg
+```
+
+**注意**: 使用图片背景时，需要将图片文件放入 `assets/images/` 目录，支持 jpg、png、gif 格式。图片文件名不需要包含扩展名。
 
 ## 安全提醒
 

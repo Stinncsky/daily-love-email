@@ -40,7 +40,21 @@ def _override_env(config, path_parts=None):
             else:
                 env_key = "_".join([p.upper() for p in current_path])
                 if env_key in os.environ:
-                    config[key] = _cast_leaf(value, os.environ[env_key])
+                    env_val = os.environ[env_key]
+                    # 如果原值是列表或字典类型，尝试将环境变量的 JSON 字符串解析为相同类型
+                    if isinstance(value, (list, dict)):
+                        try:
+                            import json
+                            parsed = json.loads(env_val)
+                            if isinstance(parsed, type(value)):  # 类型必须匹配
+                                config[key] = parsed
+                            # 无论解析成功还是类型不匹配，都 continue 保留原值
+                            continue
+                        except Exception:
+                            # 解析失败，保留原值
+                            continue
+                    # 其他情况走原有类型转换逻辑
+                    config[key] = _cast_leaf(value, env_val)
     return config
 
 

@@ -1,8 +1,22 @@
+import base64
 from pathlib import Path
 from typing import Dict, Any, Optional
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from background import get_background_style
+
+
+def get_icon_base64(icon_name: str = "romantic-icon") -> str:
+    """Read an icon image and return it as a base64-encoded data URL."""
+    icon_path = Path(__file__).parent.parent / "assets" / "images" / f"{icon_name}.png"
+
+    if not icon_path.exists():
+        raise FileNotFoundError(f"Icon not found: {icon_path}")
+
+    with open(icon_path, "rb") as f:
+        encoded = base64.b64encode(f.read()).decode("ascii")
+
+    return f"data:image/png;base64,{encoded}"
 
 
 def get_template_env() -> Environment:
@@ -146,6 +160,7 @@ def render_email(context: dict) -> str:
         template_name=template_name,
         background_style=background_style,
         card_background_style=card_background_style,
+        card_background_type=card_bg_type,
     )
 
 
@@ -162,10 +177,17 @@ def render_email_template_new(
     template_name: str = "email_new",
     background_style: str = "linear-gradient(180deg, #FAD4E4 0%, #FDF6F0 50%, #FFF8F5 100%)",
     card_background_style: Optional[str] = None,
+    card_background_type: str = "solid",
 ) -> str:
     """渲染新的浪漫风格邮件模板."""
     env = get_template_env()
     template = env.get_template(f"{template_name}.html")
+
+    # 获取图标 base64 数据
+    try:
+        icon_base64 = get_icon_base64("romantic-icon")
+    except Exception:
+        icon_base64 = ""
 
     context = {
         "recipient_name": recipient_name,
@@ -179,6 +201,8 @@ def render_email_template_new(
         "today": today,
         "background_style": background_style,
         "card_background_style": card_background_style,
+        "card_background_type": card_background_type,
+        "icon_base64": icon_base64,
     }
 
     return template.render(**context)

@@ -13,7 +13,7 @@ import time
 import threading
 import itertools
 import functools
-from typing import Any, Callable, Hashable, Iterable, Iterator, Tuple
+from typing import Any, Callable, Iterable, Iterator, Tuple
 
 
 def timed(func: Callable) -> Callable:

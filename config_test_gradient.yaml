@@ -1,0 +1,27 @@
+# 场景3: 渐变背景测试
+email:
+  sender: "test@example.com"
+  password: "test"
+  recipient: "partner@example.com"
+  smtp_server: "smtp.example.com"
+  smtp_port: 465
+  sender_name: "测试"
+  recipient_name: "伴侣"
+
+love:
+  start_date: "2023-01-01"
+
+anniversaries: []
+
+weather:
+  city: "Beijing"
+  api_key: "test_key"
+
+app:
+  timezone: "Asia/Shanghai"
+  template: "email_new"
+  background_type: "gradient"
+  background_image: "romantic"
+  # 渐变背景配置
+  card_background_type: gradient
+  card_background_value: "linear-gradient(135deg, #FFE4E1 0%, #FFF0F5 50%, #E6E6FA 100%)"

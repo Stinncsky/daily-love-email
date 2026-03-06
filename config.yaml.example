@@ -42,5 +42,6 @@ app:
   #   
   #   card_background_type: image
   #   card_background_value: "card_bg"  # 图片文件名(不含扩展名，放在 assets/images/backgrounds/)
+  #   图片会自动使用 cover 模式填满整个卡片容器
   card_background_type: solid
   card_background_value: "rgba(255, 255, 255, 0.6)"  # 默认半透明白色

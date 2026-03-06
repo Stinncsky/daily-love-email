@@ -9,33 +9,39 @@ def send_email(config: dict, subject: str, html_content: str, to: Optional[str] 
     """
     Send an HTML email via QQ Mail SMTP using SSL.
 
-    Required config keys:
-      - smtp_server: SMTP server address (default: 'smtp.qq.com')
-      - smtp_port: SMTP SSL port (default: 465)
-      - smtp_user: QQ邮箱账号 (如: 123456789@qq.com)
-      - smtp_password: SMTP授权码/开通的独立密码；不是登录密码
-      - from_email: 发件邮箱地址（通常与 smtp_user 相同）
-      - sender_name: 发件人显示名称（可选）
-      - to_email: 默认收件人邮箱（可选，如未提供则必须传入参数 to）
+    Supports both nested config structure (preferred) and legacy flat structure:
+    
+    Nested structure (preferred):
+      config["email"]["smtp_server"]: SMTP server address (default: 'smtp.qq.com')
+      config["email"]["smtp_port"]: SMTP SSL port (default: 465)
+      config["email"]["sender"]: QQ邮箱账号 (如: 123456789@qq.com)
+      config["email"]["password"]: SMTP授权码/开通的独立密码；不是登录密码
+      config["email"]["sender_name"]: 发件人显示名称（可选）
+      config["email"]["recipient"]: 默认收件人邮箱（可选，如未提供则必须传入参数 to）
+    
+    Legacy flat structure (backward compatibility):
+      - smtp_server, smtp_port, smtp_user, smtp_password, from_email, sender_name, to_email
     
     Args:
       config: 邮件服务器及发件信息的配置字典。
       subject: 邮件主题
       html_content: HTML格式的邮件正文内容
-      to: 收件人邮箱，可选；若未传则使用 config['to_email']。
+      to: 收件人邮箱，可选；若未传则使用 config['email']['recipient'] 或 config['to_email']。
     
     Returns:
       bool: True 表示发送成功，False 表示失败。
     """
     try:
-        smtp_server = config.get("smtp_server", "smtp.qq.com")
-        smtp_port = int(config.get("smtp_port", 465))
-        smtp_user = config["smtp_user"]  # 必填
-        smtp_password = config["smtp_password"]  # 必填：QQ邮箱的 SMTP 授权码
-        from_email = config.get("from_email", smtp_user)
-        sender_name = config.get("sender_name", "")
+        email_cfg = config.get("email", {})
+        
+        smtp_server = email_cfg.get("smtp_server") or config.get("smtp_server", "smtp.qq.com")
+        smtp_port = int(email_cfg.get("smtp_port") or config.get("smtp_port", 465))
+        smtp_user = email_cfg.get("sender") or config.get("smtp_user")
+        smtp_password = email_cfg.get("password") or config.get("smtp_password")
+        from_email = email_cfg.get("sender") or config.get("from_email") or smtp_user
+        sender_name = email_cfg.get("sender_name") or config.get("sender_name", "")
 
-        recipient = to if to else config.get("to_email")
+        recipient = to if to else (email_cfg.get("recipient") or config.get("to_email"))
         if not recipient:
             logging.error("send_email: 收件人邮箱未指定（参数 to 未提供且 config 中也没有 to_email）")
             return False

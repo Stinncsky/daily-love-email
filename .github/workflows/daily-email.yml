@@ -42,7 +42,12 @@ jobs:
           EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
+          SENDER_NAME: ${{ secrets.SENDER_NAME }}
+          RECIPIENT_NAME: ${{ secrets.RECIPIENT_NAME }}
           WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
           LOVE_START_DATE: ${{ secrets.LOVE_START_DATE }}
           CITY: ${{ secrets.CITY }}
+          ANNIVERSARIES: ${{ secrets.ANNIVERSARIES }}
           DRY_RUN: ${{ github.event.inputs.dry_run }}
+          CARD_BACKGROUND_TYPE: ${{ secrets.CARD_BACKGROUND_TYPE }}
+          CARD_BACKGROUND_VALUE: ${{ secrets.CARD_BACKGROUND_VALUE }}

@@ -1,69 +1,51 @@
 from datetime import datetime, date
-from typing import Tuple
-from dateutil.tz import tzlocal
+import calendar
 
+def calculate_days_together(start_date: str) -> tuple[int, int, int]:
+    """Calculate (days, months, years) between start_date and today.
 
-def calculate_days_together(start_date: str) -> Tuple[int, int, int]:
-    """
-    Calculate days together from start_date to today.
-    
-    Args:
-        start_date: Date string in YYYY-MM-DD format
-        
-    Returns:
-        Tuple of (days, months, years)
-        
-    Raises:
-        ValueError: If start_date is in the future or invalid format
+    - days: number of days remaining after removing full months and years
+    - months: number of full months after the years
+    - years: number of full years
+
+    Accepts ISO format dates (YYYY-MM-DD) or YYYY/MM/DD. If parsing fails or the date
+    is in the future, returns (0, 0, 0).
     """
     try:
-        sd = datetime.strptime(start_date, "%Y-%m-%d").date()
-    except ValueError as e:
-        raise ValueError(f"Invalid date format. Expected YYYY-MM-DD: {e}")
-    
-    # Get today with timezone awareness
-    today = datetime.now(tz=tzlocal()).date()
-    
-    if sd > today:
-        raise ValueError("Start date cannot be in the future")
-    
-    # Calculate years
-    years = today.year - sd.year
-    if (today.month, today.day) < (sd.month, sd.day):
-        years -= 1
-    
-    # Calculate months from the base date after years
-    base_date = date(today.year - (0 if (today.month, today.day) >= (sd.month, sd.day) else 1), sd.month, sd.day)
-    if base_date.day != sd.day:  # Handle month-end adjustments
-        # Find last day of the month
-        import calendar
-        _, last_day = calendar.monthrange(base_date.year, base_date.month)
-        base_date = base_date.replace(day=min(sd.day, last_day))
-    
-    months = 0
-    while True:
-        next_month = add_months(base_date, 1)
-        if next_month > today:
-            break
-        base_date = next_month
-        months += 1
-    
-    # Calculate remaining days
-    days = (today - base_date).days
-    
-    return days, months, years
+        # Normalize input to a date object
+        if isinstance(start_date, date):
+            sd = start_date
+        else:
+            if isinstance(start_date, str):
+                for fmt in ("%Y-%m-%d", "%Y/%m/%d"):
+                    try:
+                        sd = datetime.strptime(start_date, fmt).date()
+                        break
+                    except ValueError:
+                        continue
+                else:
+                    return (0, 0, 0)
+            else:
+                return (0, 0, 0)
+        today = date.today()
+        if sd > today:
+            return (0, 0, 0)
 
+        def add_month(dt: date, months: int = 1) -> date:
+            year = dt.year + (dt.month + months - 1) // 12
+            month = (dt.month + months - 1) % 12 + 1
+            day = min(dt.day, calendar.monthrange(year, month)[1])
+            return date(year, month, day)
 
-def add_months(d: date, months: int) -> date:
-    """Safely add months to a date, handling month-end adjustments."""
-    import calendar
-    
-    month = d.month - 1 + months
-    year = d.year + month // 12
-    month = month % 12 + 1
-    
-    # Handle day overflow (e.g., Jan 31 + 1 month = Feb 28/29)
-    _, last_day = calendar.monthrange(year, month)
-    day = min(d.day, last_day)
-    
-    return date(year, month, day)
+        cur = sd
+        total_months = 0
+        while add_month(cur, 1) <= today:
+            cur = add_month(cur, 1)
+            total_months += 1
+
+        years = total_months // 12
+        months = total_months % 12
+        days = (today - cur).days
+        return (days, months, years)
+    except Exception:
+        return (0, 0, 0)

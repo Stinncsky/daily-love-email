@@ -3,3 +3,5 @@ config.yaml
 __pycache__
 .env
 .sisyphus/evidence/
+test_output.html
+*.log

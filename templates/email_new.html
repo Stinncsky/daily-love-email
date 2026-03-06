@@ -29,18 +29,37 @@
 </head>
 <body style="margin: 0; padding: 0; background: {{ background_style|default('linear-gradient(180deg, #FAD4E4 0%, #FDF6F0 50%, #FFF8F5 100%)') }}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'WenQuanYi Micro Hei', sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh;">
 
+    <!--[if mso]>
+    <v:background xmlns:v="urn:schemas-microsoft-com:vml" fill="t">
+        <v:fill type="gradient" color="#FAD4E4" color2="#FFF8F5" angle="180"/>
+    </v:background>
+    <![endif]-->
+
     <!-- Main Container -->
-    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
         <tr>
             <td align="center" style="padding: 40px 20px;">
                 
                 <!-- Email Content Container -->
-<table class="container" border="0" cellpadding="0" cellspacing="0" width="560" style="max-width: 560px; background: {{ card_background_style|default('rgba(255, 255, 255, 0.6)') }}; backdrop-filter: blur(10px); border-radius: 20px; box-shadow: 0 8px 32px rgba(184, 123, 123, 0.15);">
+{% if card_background_type == 'image' %}
+                <!--[if mso]>
+                <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:560px; max-width:560px;">
+                <v:fill type="tile" src="{{ card_background_style }}" />
+                <v:textbox inset="0,0,0,0" style="mso-fit-shape-to-text:true">
+                <![endif]-->
+<table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="560" style="max-width: 560px; background-image: {{ card_background_style }}; background-size: cover; background-position: center; background-repeat: no-repeat; background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 32px rgba(184, 123, 123, 0.15);">
+{% else %}
+                <!--[if mso]>
+                <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" fillcolor="#FFFFFF" style="width:560px; max-width:560px;">
+                <v:textbox inset="0,0,0,0" style="mso-fit-shape-to-text:true">
+                <![endif]-->
+<table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="560" style="max-width: 560px; background: rgba(255, 255, 255, 0.95); background: {{ card_background_style|default('rgba(255, 255, 255, 0.6)') }}; backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 32px rgba(184, 123, 123, 0.15);">
+{% endif %}
                     
                     <!-- Top Decoration: Heart Icon -->
                     <tr>
                         <td style="text-align: center; padding-top: 40px; padding-bottom: 10px;">
-                            <span style="font-size: 48px; color: #B87B7B; line-height: 1;">♥</span>
+                            <img src="{{ icon_base64 }}" alt="" style="width: 80px; height: auto; display: inline-block;">
                         </td>
                     </tr>
                     
@@ -55,10 +74,10 @@
                     <!-- Days Together Card (Pink Gradient) -->
                     <tr>
                         <td style="padding: 0 30px 20px;">
-                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
                                     <td style="background: linear-gradient(135deg, #F4C2C2 0%, #E8B4B8 100%); border-radius: 16px; padding: 35px 30px; text-align: center; box-shadow: 0 4px 15px rgba(232, 180, 184, 0.3);">
-                                        <p style="margin: 0 0 15px; color: rgba(92, 74, 61, 0.8); font-size: 14px; letter-spacing: 3px; font-weight: 500;">我们已经相爱了</p>
+                                        <p style="margin: 0 0 15px; color: rgba(92, 74, 61, 0.8); font-size: 20px; letter-spacing: 3px; font-weight: 500;">我们已经相爱了</p>
                                         <div class="days-number" style="font-size: 88px; font-weight: 700; color: #5C4A3D; line-height: 1; margin: 0; letter-spacing: -2px; text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.3);">{{ days_together }}</div>
                                         <p style="margin: 10px 0 0; color: #5C4A3D; font-size: 18px; font-weight: 500; letter-spacing: 4px;">天</p>
                                     </td>
@@ -71,10 +90,10 @@
                     {% if weather %}
                     <tr>
                         <td style="padding: 0 30px 20px;">
-                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
                                     <td style="background: linear-gradient(135deg, #A8D8EA 0%, #B8E6F0 100%); border-radius: 16px; padding: 25px 30px; box-shadow: 0 4px 15px rgba(168, 216, 234, 0.3);">
-                                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                                             <tr>
                                                 <td style="padding-bottom: 15px; text-align: center;">
                                                     <span style="font-size: 14px; color: #5C4A3D; letter-spacing: 1px;">📍 {{ recipient_city }} 今天</span>
@@ -97,20 +116,20 @@
                     
                     <!-- Quote Card (White Semi-transparent with Quote Decoration) -->
                     <tr>
-                        <td style="padding: 0 30px 30px;">
-                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <td style="padding: 0 30px 16px;">
+                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
-                                    <td style="background: rgba(255, 255, 255, 0.85); border-radius: 16px; padding: 35px 30px; box-shadow: 0 4px 20px rgba(184, 123, 123, 0.1); border: 1px solid rgba(255, 255, 255, 0.5);">
+                                     <td style="background: rgba(255, 255, 255, 0.85); border-radius: 16px; padding: 14px 22px; box-shadow: 0 4px 20px rgba(184, 123, 123, 0.1); border: 1px solid rgba(255, 255, 255, 0.5);">
                                         <!-- Opening Quote -->
-                                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                                             <tr>
                                                 <td style="padding-bottom: 10px;">
-                                                    <span style="font-size: 48px; color: #E8B4B8; line-height: 1; font-family: Georgia, serif; opacity: 0.6;">"</span>
+                                                    <span style="font-size: 36px; color: #E8B4B8; line-height: 1; font-family: Georgia, serif; opacity: 0.6;">"</span>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <p class="quote-text" style="margin: 0; color: #5C4A3D; font-size: 17px; line-height: 1.9; font-style: italic; text-align: center; padding: 0 10px;">
+                                                     <p class="quote-text" style="margin: 0; color: #5C4A3D; font-size: 18px; line-height: 1.6; font-style: italic; text-align: center; padding: 0 10px;">
                                                         {{ quote.content }}
                                                     </p>
                                                 </td>
@@ -118,7 +137,7 @@
                                             <!-- Closing Quote -->
                                             <tr>
                                                 <td style="padding-top: 10px; text-align: right;">
-                                                    <span style="font-size: 48px; color: #E8B4B8; line-height: 1; font-family: Georgia, serif; opacity: 0.6;">"</span>
+                                                    <span style="font-size: 36px; color: #E8B4B8; line-height: 1; font-family: Georgia, serif; opacity: 0.6;">"</span>
                                                 </td>
                                             </tr>
                                         </table>
@@ -131,10 +150,10 @@
                     <!-- Bottom Divider -->
                     <tr>
                         <td style="padding: 0 30px 25px; text-align: center;">
-                            <table border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
+                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
                                 <tr>
-                                    <td style="color: #B87B7B; font-size: 14px; letter-spacing: 3px;">
-                                        ─── ♥ ───
+                                    <td style="color: #B87B7B; font-size: 35px; letter-spacing: 0px;">
+                                        ───── ♥ ─────
                                     </td>
                                 </tr>
                             </table>
@@ -144,15 +163,19 @@
                     <!-- Signature Section -->
                     <tr>
                         <td style="padding: 0 30px 40px; text-align: center;">
-                            <p style="margin: 0 0 8px; color: #5C4A3D; font-size: 16px; font-weight: 500; letter-spacing: 1px;">爱你的, {{ sender_name }}</p>
-                            <p style="margin: 0; color: #8B7355; font-size: 13px;">{{ today }}</p>
+                            <p style="margin: 0 0 8px; color: #5C4A3D; font-size: 20px; font-weight: 500; letter-spacing: 1px;">爱你的, {{ sender_name }}</p>
+                            <p style="margin: 0; color: #8B7355; font-size: 18px;">{{ today }}</p>
                         </td>
                     </tr>
                     
                 </table>
-                
+                <!--[if mso]>
+                </v:textbox>
+                </v:rect>
+                <![endif]-->
+
                 <!-- Spacing at bottom -->
-                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                     <tr><td style="height: 40px;"></td></tr>
                 </table>
                 
