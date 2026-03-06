@@ -49,6 +49,8 @@ def send_email(config: dict, subject: str, html_content: str, to: Optional[str] 
             logging.error("send_email: 发件人邮箱格式无效: %s", from_email)
             return False
 
+        logging.info("send_email: 发件人邮箱=%s, sender_name=%s", from_email, sender_name)
+
         recipient = to if to else (email_cfg.get("recipient") or config.get("to_email"))
         if not recipient:
             logging.error("send_email: 收件人邮箱未指定（参数 to 未提供且 config 中也没有 to_email）")
