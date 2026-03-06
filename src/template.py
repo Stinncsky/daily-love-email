@@ -2,6 +2,8 @@ from pathlib import Path
 from typing import Dict, Any, Optional
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
+from background import get_background_style
+
 
 def get_template_env() -> Environment:
     """Create and configure Jinja2 environment for email templates."""
@@ -42,7 +44,7 @@ def render_email_template(
         Rendered HTML string ready for email
     """
     env = get_template_env()
-    template = env.get_template("email.html")
+    template = env.get_template("email_new.html")
     
     context = {
         "days_together": days_together,
@@ -89,35 +91,94 @@ def render_email_with_data(data: Dict[str, Any]) -> str:
 def render_email(context: dict) -> str:
     """
     Render email template with main.py compatible interface.
-    
-    This is a wrapper that adapts main.py's context format to 
-    render_email_with_data's expected format.
-    
+
+    This is a wrapper that adapts main.py's context format to
+    render_email_template_new's expected format (the new romantic template).
+
     Args:
-        context: Dict from main.py with keys: days_together, quote, weather, 
-                 anniversary, date, config
-                 
+        context: Dict from main.py with keys: days_together, quote, weather,
+                 anniversary, date, config, sender_name, recipient_name, recipient_city
+
     Returns:
         Rendered HTML string
     """
     import datetime
-    
-    # 直接使用 context 中的值，不再重新计算
+    from background import get_card_background_style
+
     days = context.get("days_together", 0)
     months = context.get("months_together", 0)
     years = context.get("years_together", 0)
-    
-    # Build data dict for render_email_with_data
-    data = {
-        "days_together": days,
-        "months_together": months,
-        "years_together": years,
-        "quote": context.get("quote", {"content": "", "category": ""}),
-        "weather": context.get("weather"),
-        "next_anniversary": context.get("anniversary"),
-        "today": context.get("date", datetime.date.today().isoformat()),
-        "sender_name": context.get("sender_name", ""),
-        "recipient_name": context.get("recipient_name", ""),
+
+    # 从配置读取模板和背景设置
+    config = context.get("config", {})
+    app_config = config.get("app", {})
+
+    template_name = app_config.get("template", "email_new")
+    background_type = app_config.get("background_type", "gradient")
+    background_image = app_config.get("background_image", "romantic")
+
+    card_bg_type = app_config.get("card_background_type", "solid")
+    card_bg_value = app_config.get("card_background_value", "rgba(255, 255, 255, 0.6)")
+
+    # Generate card background style if possible
+    try:
+        card_background_style = get_card_background_style(card_bg_type, card_bg_value)
+    except Exception:
+        # Fallback to a sensible default if styling generation fails
+        card_background_style = "rgba(255, 255, 255, 0.6)"
+
+    # 获取背景样式
+    try:
+        background_style = get_background_style(background_type, background_image)
+    except Exception:
+        background_style = "linear-gradient(180deg, #FAD4E4 0%, #FDF6F0 50%, #FFF8F5 100%)"
+
+    return render_email_template_new(
+        recipient_name=context.get("recipient_name", ""),
+        sender_name=context.get("sender_name", ""),
+        recipient_city=context.get("recipient_city", ""),
+        days_together=days,
+        months_together=months,
+        years_together=years,
+        quote=context.get("quote", {"content": "", "category": ""}),
+        weather=context.get("weather"),
+        today=context.get("date", datetime.date.today().isoformat()),
+        template_name=template_name,
+        background_style=background_style,
+        card_background_style=card_background_style,
+    )
+
+
+def render_email_template_new(
+    recipient_name: str,
+    sender_name: str,
+    recipient_city: str,
+    days_together: int,
+    months_together: int,
+    years_together: int,
+    quote: dict,
+    weather: Optional[Dict[str, Any]],
+    today: str,
+    template_name: str = "email_new",
+    background_style: str = "linear-gradient(180deg, #FAD4E4 0%, #FDF6F0 50%, #FFF8F5 100%)",
+    card_background_style: Optional[str] = None,
+) -> str:
+    """渲染新的浪漫风格邮件模板."""
+    env = get_template_env()
+    template = env.get_template(f"{template_name}.html")
+
+    context = {
+        "recipient_name": recipient_name,
+        "sender_name": sender_name,
+        "recipient_city": recipient_city,
+        "days_together": days_together,
+        "months_together": months_together,
+        "years_together": years_together,
+        "quote": quote,
+        "weather": weather,
+        "today": today,
+        "background_style": background_style,
+        "card_background_style": card_background_style,
     }
-    
-    return render_email_with_data(data)
+
+    return template.render(**context)

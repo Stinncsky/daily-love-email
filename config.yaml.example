@@ -5,6 +5,8 @@ email:
   recipient: "partner@example.com" # 收件人邮箱
   smtp_server: "smtp.qq.com"
   smtp_port: 465
+  sender_name: "亲爱的老公"         # 发件人显示称呼（可选）
+  recipient_name: "老婆"           # 收件人显示称呼（可选）
 
 # 恋爱信息
 love:
@@ -25,3 +27,20 @@ weather:
 # 其他配置
 app:
   timezone: "Asia/Shanghai"
+  template: "email_new"
+  background_type: "gradient"
+  background_image: "romantic"
+  
+  # 卡片背景配置（主内容容器背景）
+  # 可选类型: solid(纯色), gradient(渐变), image(图片)
+  # 示例:
+  #   card_background_type: solid
+  #   card_background_value: "#FFE4E1"  # 粉色背景
+  #   
+  #   card_background_type: gradient
+  #   card_background_value: "linear-gradient(135deg, #FFE4E1 0%, #FFF0F5 100%)"
+  #   
+  #   card_background_type: image
+  #   card_background_value: "card_bg"  # 图片文件名(不含扩展名，放在 assets/images/backgrounds/)
+  card_background_type: solid
+  card_background_value: "rgba(255, 255, 255, 0.6)"  # 默认半透明白色
