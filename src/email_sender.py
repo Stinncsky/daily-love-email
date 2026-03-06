@@ -38,11 +38,15 @@ def send_email(config: dict, subject: str, html_content: str, to: Optional[str] 
         smtp_port = int(email_cfg.get("smtp_port") or config.get("smtp_port", 465))
         smtp_user = email_cfg.get("sender") or config.get("smtp_user")
         smtp_password = email_cfg.get("password") or config.get("smtp_password")
-        from_email = email_cfg.get("sender") or config.get("from_email") or smtp_user
-        sender_name = email_cfg.get("sender_name") or config.get("sender_name", "")
+        from_email = (email_cfg.get("sender") or config.get("from_email") or smtp_user or "").strip()
+        sender_name = (email_cfg.get("sender_name") or config.get("sender_name", "")).strip()
 
         if not from_email:
             logging.error("send_email: 发件人邮箱未配置 (EMAIL_SENDER 或 from_email)")
+            return False
+
+        if "@" not in from_email:
+            logging.error("send_email: 发件人邮箱格式无效: %s", from_email)
             return False
 
         recipient = to if to else (email_cfg.get("recipient") or config.get("to_email"))
