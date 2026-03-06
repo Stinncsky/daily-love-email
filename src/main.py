@@ -76,16 +76,13 @@ def append_learning_log(entry: str):
 def load_config_safe():
     """Load config from config.yaml via load_config(), or fall back to env vars."""
     cfg = {}
-    # Preferred: load from config.yaml / environment via the project API
     if callable(load_config):
         try:
             cfg = load_config()
         except Exception as e:
             log.warning("load_config() failed: %s", e)
             cfg = {}
-    # Fallback: environment-based config
     if not cfg:
-        # Nested structure as per plan
         cfg = {
             "email": {
                 "recipient": os.environ.get("EMAIL_RECIPIENT"),
@@ -103,33 +100,49 @@ def load_config_safe():
             "love": {
                 "start_date": os.environ.get("LOVE_START_DATE"),
             },
-            "anniversaries": [],
+            "anniversaries": parse_anniversaries_from_env(),
             "subject": os.environ.get("EMAIL_SUBJECT", "Daily Love Email"),
             "start_date": os.environ.get("LOVE_START_DATE"),
         }
     return cfg
 
 
+def parse_anniversaries_from_env():
+    """Parse anniversaries from environment variable ANNIVERSARIES (JSON format)."""
+    import json
+    anniversaries_env = os.environ.get("ANNIVERSARIES", "")
+    if not anniversaries_env:
+        return []
+    try:
+        anniversaries = json.loads(anniversaries_env)
+        if isinstance(anniversaries, list):
+            return anniversaries
+    except json.JSONDecodeError:
+        pass
+    return []
+
+
 def safe_call(func, *args, **kwargs):
-    """Call a function if available, else return None."""
+    """Call a function if available, else return None.
+    - If the function raises a TypeError due to signature mismatch, try calling without args.
+    - Do not blanket-catch unrelated exceptions to avoid hiding bugs."""
     if not callable(func):
         return None
     try:
         return func(*args, **kwargs)
     except TypeError:
-        # Fallback: call with no args, in case the signature is different
+        # Fallback: attempt to call with no args if signature differs
         try:
             return func()
         except Exception as e:
             log.error("Function call failed: %s", e)
             return None
-    except Exception as e:
-        log.error("Function call failed: %s", e)
-        return None
+    # Do not catch all other exceptions to avoid hiding bugs; let them propagate
 
 
 def build_context(cfg, days, months, years, weather, quote, anniversary):
     email_cfg = cfg.get("email", {})
+    weather_cfg = cfg.get("weather", {})
     return {
         "config": cfg,
         "days_together": days,
@@ -141,6 +154,8 @@ def build_context(cfg, days, months, years, weather, quote, anniversary):
         "date": date.today().isoformat(),
         "sender_name": email_cfg.get("sender_name", ""),
         "recipient_name": email_cfg.get("recipient_name", ""),
+        "recipient_city": weather_cfg.get("city", ""),
+        "template_name": cfg.get("app", {}).get("template", "email_new"),
     }
 
 
@@ -150,7 +165,7 @@ def main():
     parser.add_argument("--test-email", dest="test_email", default=None, help="Override recipient email for testing")
     args = parser.parse_args()
 
-    dry_run = bool(args.dry_run)
+    dry_run = bool(args.dry_run) or os.environ.get("DRY_RUN", "").lower() in ("true", "1", "yes")
     test_email = args.test_email
 
     
@@ -188,7 +203,7 @@ def main():
     subject = cfg.get("email", {}).get("subject", cfg.get("subject", "Daily Love Email"))
 
     if not recipient:
-        log.error("No recipient email configured (TO_EMAIL). Aborting.")
+        log.error("No recipient email configured. Aborting.")
         return 1
 
     if dry_run:
