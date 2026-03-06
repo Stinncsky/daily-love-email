@@ -2,6 +2,7 @@ import logging
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.utils import formataddr
 from typing import Optional
 
 
@@ -58,12 +59,7 @@ def send_email(config: dict, subject: str, html_content: str, to: Optional[str] 
 
         # 构建邮件消息（MIME 邮件，HTML 内容，UTF-8 编码）
         msg = MIMEMultipart("alternative")
-        # From 头：包含显示名称时如 'Name <email@example.com>'
-        if sender_name:
-            from_header = f"{sender_name} <{from_email}>"
-        else:
-            from_header = from_email
-        msg["From"] = from_header
+        msg["From"] = formataddr((sender_name or None, from_email))
         msg["To"] = recipient
         msg["Subject"] = subject
 
