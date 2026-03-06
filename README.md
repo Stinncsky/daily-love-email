@@ -18,8 +18,7 @@
 
 ### 截图预览
 
-[//]: # (在这里放置邮件截图)
-[//]: # (请将截图命名为 screenshot.png 放入项目根目录)
+![每日恋爱邮件预览](screenshot.png)
 
 ## 快速开始
 
@@ -150,6 +149,11 @@ python src/main.py --test-email your_test_email@example.com
 | WEATHER_API_KEY | OpenWeatherMap API Key | 必需 |
 | LOVE_START_DATE | 恋爱起始日期 (YYYY-MM-DD) | 必需 |
 | CITY | 目标城市（英文） | 必需 |
+| ANNIVERSARIES | 纪念日列表（JSON 格式） | 必需 |
+| SENDER_NAME | 发件人显示称呼（可选） | 可选 |
+| RECIPIENT_NAME | 收件人显示称呼（可选） | 可选 |
+
+<!-- AUTO-GENERATED: GitHub Secrets -->
 
 详细的授权码和 API Key 获取方法见下文「GitHub Secrets 详细配置」章节。
 
@@ -167,7 +171,7 @@ python src/main.py --test-email your_test_email@example.com
 4. 等待几秒钟，刷新页面查看运行状态
 5. 点击运行记录查看详情，确认无报错
 
-现在每天零点就会自动发送邮件了。
+现在每天早上八点就会自动发送邮件了。
 
 > 详细的 Secrets 配置说明、授权码获取方法、常见问题排查，请参阅 [.github/secrets_template.md](./.github/secrets_template.md)。
 
@@ -201,13 +205,17 @@ config.yaml 文件包含以下配置项：
 
 ### email 配置段
 
-| 字段 | 说明 | 示例 |
-|------|------|------|
-| sender | 发件人邮箱地址 | your_email@qq.com |
-| password | QQ 邮箱授权码 | xxxxxxxx |
-| recipient | 收件人邮箱地址 | partner@email.com |
-| smtp_server | SMTP 服务器地址 | smtp.qq.com |
-| smtp_port | SMTP 端口号 | 465 |
+| 字段 | 说明 | 示例 | 必需 |
+|------|------|------|------|
+| sender | 发件人邮箱地址 | your_email@qq.com | 必需 |
+| password | QQ 邮箱授权码 | xxxxxxxx | 必需 |
+| recipient | 收件人邮箱地址 | partner@email.com | 必需 |
+| smtp_server | SMTP 服务器地址 | smtp.qq.com | 必需 |
+| smtp_port | SMTP 端口号 | 465 | 必需 |
+| sender_name | 发件人显示称呼（可选） | 你的名字 | 可选 |
+| recipient_name | 收件人显示称呼（可选） | 亲爱的 | 可选 |
+
+<!-- AUTO-GENERATED: email config -->
 
 ### love 配置段
 
@@ -233,9 +241,16 @@ config.yaml 文件包含以下配置项：
 
 ### app 配置段
 
-| 字段 | 说明 | 示例 |
-|------|------|------|
-| timezone | 时区设置 | Asia/Shanghai |
+| 字段 | 说明 | 示例 | 必需 |
+|------|------|------|------|
+| timezone | 时区设置 | Asia/Shanghai | 必需 |
+| template | 邮件模板名称 (email_new / email) | email_new | 可选 |
+| background_type | 背景类型 (gradient / solid / image) | gradient | 可选 |
+| background_image | 背景图片主题 (romantic / nature / custom) | romantic | 可选 |
+| card_background_type | 卡片背景类型 (image / gradient / solid) | image | 可选 |
+| card_background_value | 卡片背景值 (与 background_image 相同) | romantic | 可选 |
+
+<!-- AUTO-GENERATED: app config -->
 
 ## 本地开发
 
@@ -279,7 +294,18 @@ python src/main.py --dry-run
 
 # 发送测试邮件到指定邮箱
 python src/main.py --test-email your_test_email@example.com
+
+# 生成邮件 HTML 预览文件（不发送邮件）
+python scripts/generate_email.py
+
+# 生成预览并指定配置文件和输出目录
+python scripts/generate_email.py -c config.yaml -o ./output
+
+# 生成预览并在浏览器中打开
+python scripts/generate_email.py --open
 ```
+
+`scripts/generate_email.py` 脚本用于生成邮件 HTML 预览文件，方便在浏览器中查看邮件效果。生成的文件保存在 `output/` 目录，文件名格式为 `email_YYYYMMDD_HHMMSS.html`。
 
 ## 测试
 
@@ -322,14 +348,14 @@ python src/main.py --test-email your_test_email@example.com
 
 ### 如何修改发送时间
 
-GitHub Actions 的触发时间由 `.github/workflows/daily-email.yml` 文件中的 cron 表达式控制。当前配置为每天零点执行：
+GitHub Actions 的触发时间由 `.github/workflows/daily-email.yml` 文件中的 cron 表达式控制。当前配置为每天早上八点执行：
 
 ```yaml
 schedule:
-  - cron: '0 0 * * *'
+  - cron: '0 8 * * *'
 ```
 
-如果你想修改发送时间，比如改为早上八点，可以将 cron 表达式改为 `0 8 * * *`。关于 cron 表达式的更多用法，可以参考 crontab.guru 网站。
+如果你想修改发送时间，比如改为早上九点，可以将 cron 表达式改为 `0 9 * * *`。关于 cron 表达式的更多用法，可以参考 crontab.guru 网站。
 
 ### 如何添加更多纪念日
 
