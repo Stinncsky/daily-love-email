@@ -5,3 +5,4 @@ __pycache__
 .sisyphus/evidence/
 test_output.html
 *.log
+output/
