@@ -2,7 +2,7 @@ config.yaml
 *.pyc
 __pycache__
 .env
-.sisyphus/evidence/
+.sisyphus/
 test_output.html
 *.log
 output/
