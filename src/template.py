@@ -1,22 +1,15 @@
-import base64
+import os
+import re
 from pathlib import Path
 from typing import Dict, Any, Optional
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from background import get_background_style
-
-
-def get_icon_base64(icon_name: str = "romantic-icon") -> str:
-    """Read an icon image and return it as a base64-encoded data URL."""
-    icon_path = Path(__file__).parent.parent / "assets" / "images" / f"{icon_name}.png"
-
-    if not icon_path.exists():
-        raise FileNotFoundError(f"Icon not found: {icon_path}")
-
-    with open(icon_path, "rb") as f:
-        encoded = base64.b64encode(f.read()).decode("ascii")
-
-    return f"data:image/png;base64,{encoded}"
+from background import (
+    get_background_style,
+    get_card_background_style,
+    get_icon_url,
+    convert_to_jsdelivr,
+)
 
 
 def get_template_env() -> Environment:
@@ -31,6 +24,14 @@ def get_template_env() -> Environment:
     )
     
     return env
+
+
+def convert_all_to_jsdelivr(text: str) -> str:
+    """Scan the text for raw.githubusercontent.com URLs and convert them to jsDelivr CDN URLs."""
+    pattern = re.compile(r"https?://raw\.githubusercontent\.com[^\s'\"]+")
+    def _repl(m: re.Match) -> str:
+        return convert_to_jsdelivr(m.group(0))
+    return pattern.sub(_repl, text)
 
 
 def render_email_template(
@@ -70,7 +71,10 @@ def render_email_template(
         "today": today,
     }
     
-    return template.render(**context)
+    content = template.render(**context)
+    # Convert any raw.githubusercontent.com image URLs to jsDelivr CDN URLs
+    content = convert_all_to_jsdelivr(content)
+    return content
 
 
 def render_email_with_data(data: Dict[str, Any]) -> str:
@@ -117,13 +121,11 @@ def render_email(context: dict) -> str:
         Rendered HTML string
     """
     import datetime
-    from background import get_card_background_style
 
     days = context.get("days_together", 0)
     months = context.get("months_together", 0)
     years = context.get("years_together", 0)
 
-    # 从配置读取模板和背景设置
     config = context.get("config", {})
     app_config = config.get("app", {})
 
@@ -134,18 +136,28 @@ def render_email(context: dict) -> str:
     card_bg_type = app_config.get("card_background_type", "solid")
     card_bg_value = app_config.get("card_background_value", "rgba(255, 255, 255, 0.6)")
 
+    # Check if we should use URL instead of base64 (default: True)
+    use_url = os.environ.get("USE_IMAGE_URL", "true").lower() in ("true", "1", "yes")
+
     # Generate card background style if possible
     try:
-        card_background_style = get_card_background_style(card_bg_type, card_bg_value)
+        card_background_style = get_card_background_style(card_bg_type, card_bg_value, use_url=use_url)
     except Exception:
-        # Fallback to a sensible default if styling generation fails
         card_background_style = "rgba(255, 255, 255, 0.6)"
 
-    # 获取背景样式
+    # Get background style
     try:
-        background_style = get_background_style(background_type, background_image)
+        background_style = get_background_style(background_type, background_image, use_url=use_url)
     except Exception:
         background_style = "linear-gradient(180deg, #FAD4E4 0%, #FDF6F0 50%, #FFF8F5 100%)"
+
+    # Get icon URL
+    icon_url = app_config.get("icon_url")
+    if not icon_url:
+        try:
+            icon_url = get_icon_url("romantic-icon")
+        except Exception:
+            icon_url = None
 
     return render_email_template_new(
         recipient_name=context.get("recipient_name", ""),
@@ -161,6 +173,7 @@ def render_email(context: dict) -> str:
         background_style=background_style,
         card_background_style=card_background_style,
         card_background_type=card_bg_type,
+        icon_url=icon_url,
     )
 
 
@@ -178,16 +191,15 @@ def render_email_template_new(
     background_style: str = "linear-gradient(180deg, #FAD4E4 0%, #FDF6F0 50%, #FFF8F5 100%)",
     card_background_style: Optional[str] = None,
     card_background_type: str = "solid",
+    icon_url: Optional[str] = None,
 ) -> str:
-    """渲染新的浪漫风格邮件模板."""
+    """Render the new romantic style email template."""
     env = get_template_env()
     template = env.get_template(f"{template_name}.html")
 
-    # 获取图标 base64 数据
-    try:
-        icon_base64 = get_icon_base64("romantic-icon")
-    except Exception:
-        icon_base64 = ""
+    # Convert icon URL to jsDelivr if it's from raw.githubusercontent.com
+    if icon_url and "raw.githubusercontent.com" in icon_url:
+        icon_url = convert_to_jsdelivr(icon_url)
 
     context = {
         "recipient_name": recipient_name,
@@ -202,7 +214,12 @@ def render_email_template_new(
         "background_style": background_style,
         "card_background_style": card_background_style,
         "card_background_type": card_background_type,
-        "icon_base64": icon_base64,
+        "icon_base64": icon_url if icon_url else "",
     }
 
-    return template.render(**context)
+    html = template.render(**context)
+    
+    # Convert any remaining raw.githubusercontent.com URLs to jsDelivr
+    html = convert_all_to_jsdelivr(html)
+    
+    return html
