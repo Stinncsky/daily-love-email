@@ -8,15 +8,14 @@ from pathlib import Path
 def get_github_raw_url(image_path: str) -> str:
     """
     Convert a local image path to GitHub raw URL.
-    
+
     Uses GITHUB_REPO_URL environment variable to construct the URL.
-    Example: https://github.com/username/repo -> https://raw.githubusercontent.com/username/repo/main/assets/images/backgrounds/romantic.png
+    Defaults to Stinncsky/daily-love-email repository if not set.
+    Example: https://raw.githubusercontent.com/Stinncsky/daily-love-email/main/assets/images/backgrounds/romantic.png
     """
-    repo_url = os.environ.get("GITHUB_REPO_URL", "")
+    DEFAULT_REPO_URL = "https://github.com/Stinncsky/daily-love-email"
+    repo_url = os.environ.get("GITHUB_REPO_URL", DEFAULT_REPO_URL)
     branch = os.environ.get("GITHUB_BRANCH", "main")
-    
-    if not repo_url:
-        raise ValueError("GITHUB_REPO_URL environment variable not set. Example: https://github.com/username/auto-email")
     
     # Convert github.com URL to raw.githubusercontent.com
     raw_url = repo_url.replace("github.com", "raw.githubusercontent.com")

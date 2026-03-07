@@ -244,13 +244,13 @@ config.yaml 文件包含以下配置项：
 | 字段 | 说明 | 示例 | 必需 |
 |------|------|------|------|
 | timezone | 时区设置 | Asia/Shanghai | 必需 |
-| template | 邮件模板名称 (email_new / email) | email_new | 可选 |
+| template | 邮件模板名称（当前仅支持 romantic） | romantic | 可选 |
 | background_type | 背景类型 (gradient / solid / image) | gradient | 可选 |
 | background_image | 背景图片主题 (romantic / nature / custom) | romantic | 可选 |
 | card_background_type | 卡片背景类型 (image / gradient / solid) | image | 可选 |
 | card_background_value | 卡片背景值 (与 background_image 相同) | romantic | 可选 |
 
-<!-- AUTO-GENERATED: app config -->
+**注意**：图片资源默认从 GitHub 仓库 `Stinncsky/daily-love-email` 加载，无需额外配置环境变量即可本地测试。
 
 ## 本地开发
 

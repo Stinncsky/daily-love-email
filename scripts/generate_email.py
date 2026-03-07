@@ -23,7 +23,7 @@ from calculator import calculate_days_together
 from quotes import get_random_quote
 from weather import get_weather
 from anniversary import get_next_anniversary
-from template import render_email
+from template_simple import render_email
 
 def load_and_prepare_context(config_path: str):
     cfg = load_config(config_path)
