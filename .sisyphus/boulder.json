@@ -1,9 +1,10 @@
 {
-  "active_plan": "E:\\meishayong\\auto-email\\.sisyphus\\plans\\fix-critical-issues.md",
-  "started_at": "2026-03-06T17:30:08.368Z",
+  "active_plan": "E:\\meishayong\\auto-email\\.sisyphus\\plans\\email-fixes.md",
+  "started_at": "2026-03-06T19:16:27.873Z",
   "session_ids": [
-    "ses_33bcce9bbffew4r60Wr50oZq6a"
+    "ses_33ba0ad6affeaYSrqz8YG7Zqzx"
   ],
-  "plan_name": "fix-critical-issues",
-  "agent": "atlas"
+  "plan_name": "email-fixes",
+  "agent": "atlas",
+  "worktree_path": "E:/meishayong/auto-email"
 }
