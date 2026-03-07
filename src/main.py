@@ -104,6 +104,14 @@ def load_config_safe():
             "subject": os.environ.get("EMAIL_SUBJECT", "Daily Love Email"),
             "start_date": os.environ.get("LOVE_START_DATE"),
         }
+        if "app" not in cfg:
+            cfg["app"] = {}
+        if "CARD_BACKGROUND_TYPE" in os.environ:
+            cfg["app"].setdefault("card_background_type", os.environ["CARD_BACKGROUND_TYPE"])
+        if "CARD_BACKGROUND_VALUE" in os.environ:
+            cfg["app"].setdefault("card_background_value", os.environ["CARD_BACKGROUND_VALUE"])
+        if "ICON_URL" in os.environ:
+            cfg["app"].setdefault("icon_url", os.environ["ICON_URL"])
     return cfg
 
 
