@@ -37,14 +37,16 @@ def load_and_prepare_context(config_path: str):
     app_cfg = cfg.get("app", {})
 
     start_date = love_cfg.get("start_date")
+    # Calculate months/years using existing calculator, but ensure days_together is derived directly
     calc_result = calculate_days_together(start_date) if start_date else None
     if isinstance(calc_result, tuple) and len(calc_result) == 3:
         _, months_together, years_together = calc_result
-        # Calculate total days for display (not remainder days)
+        # Calculate total days for display consistently using date difference
         sd = datetime.strptime(start_date, "%Y-%m-%d").date()
         days_together = (date.today() - sd).days
     else:
-        days_together, months_together, years_together = 0, 0, 0
+        days_together = 0
+        months_together, years_together = 0, 0
 
     quote = get_random_quote()
 
@@ -69,7 +71,10 @@ def load_and_prepare_context(config_path: str):
         "template": app_cfg.get("template", ""),
         "background_type": app_cfg.get("background_type", ""),
         "background_image": app_cfg.get("background_image", ""),
+        "card_background_type": cfg.get("app", {}).get("card_background_type", "image"),
+        "card_background_value": cfg.get("app", {}).get("card_background_value", "romantic"),
     }
+    print("DEBUG CONTEXT card_background_type=", context.get("card_background_type"), "card_background_value=", context.get("card_background_value"))
     return cfg, context
 
 def main():
@@ -97,6 +102,11 @@ def main():
         f.write(html)
 
     print(f"配置加载完成: {args.config}")
+    # Verification print: ensure card background context keys exist and have values
+    print("VERIFICATION: card_background_type present=", context.get("card_background_type") is not None,
+          ", value=", context.get("card_background_type"),
+          "; card_background_value present=", context.get("card_background_value") is not None,
+          ", value=", context.get("card_background_value"))
     days = context.get("days_together", 0)
     print(f"恋爱天数: {days} 天")
     print(f"使用的模板: {context.get('template','')}，背景类型: {context.get('background_type','')}，背景图: {context.get('background_image','')}")
