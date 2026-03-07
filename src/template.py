@@ -77,35 +77,6 @@ def render_email_template(
     return content
 
 
-def render_email_with_data(data: Dict[str, Any]) -> str:
-    """
-    Render email using a data dictionary.
-    
-    Convenience function that extracts values from a dict
-    and calls render_email_template.
-    
-    Expected data structure:
-    {
-        'days_together': int,
-        'months_together': int,
-        'years_together': int,
-        'quote': {'content': str, 'category': str},
-        'weather': {'temperature': float, 'condition': str, ...} or None,
-        'next_anniversary': {'name': str, 'days_until': int} or None,
-        'today': str,
-    }
-    """
-    return render_email_template(
-        days_together=data["days_together"],
-        months_together=data["months_together"],
-        years_together=data["years_together"],
-        quote=data["quote"],
-        weather=data.get("weather"),
-        next_anniversary=data.get("next_anniversary"),
-        today=data["today"],
-    )
-
-
 def render_email(context: dict) -> str:
     """
     Render email template with main.py compatible interface.
