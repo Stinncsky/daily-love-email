@@ -1,47 +1,47 @@
 # 邮件配置
 email:
-  sender: "your_qq_email@qq.com"  # 发件人QQ邮箱
-  password: "your_auth_code"       # QQ邮箱授权码（不是登录密码）
-  recipient: "partner@example.com" # 收件人邮箱
+  sender: "your_qq_email@qq.com"      # 发件人QQ邮箱
+  password: "your_auth_code"           # QQ邮箱授权码
+  recipient: "partner@example.com"     # 收件人邮箱
   smtp_server: "smtp.qq.com"
   smtp_port: 465
-  sender_name: "亲爱的老公"         # 发件人显示称呼（可选）
-  recipient_name: "老婆"           # 收件人显示称呼（可选）
+  sender_name: "亲爱的"                # 发件人显示称呼
+  recipient_name: "宝贝"               # 收件人显示称呼
 
 # 恋爱信息
 love:
-  start_date: "2023-01-01"  # 恋爱起始日期 YYYY-MM-DD
-  
+  start_date: "2023-01-01"             # 恋爱起始日期 YYYY-MM-DD
+
 # 纪念日列表
 anniversaries:
   - name: "恋爱纪念日"
-    date: "01-01"  # MM-DD格式，每年重复
+    date: "01-01"                      # MM-DD格式
   - name: "TA的生日"
-    date: "12-25"  # MM-DD格式
-    
+    date: "12-25"
+
 # 天气配置
 weather:
-  city: "Beijing"  # 城市名称（英文）
+  city: "Beijing"                      # 城市名称（英文）
   api_key: "your_openweathermap_api_key"
 
 # 其他配置
 app:
   timezone: "Asia/Shanghai"
-  template: "email_new"
-  background_type: "gradient"
-  background_image: "romantic"
-  
-  # 卡片背景配置（主内容容器背景）
-  # 可选类型: solid(纯色), gradient(渐变), image(图片)
-  # 示例:
-  #   card_background_type: solid
-  #   card_background_value: "#FFE4E1"  # 粉色背景
-  #   
-  #   card_background_type: gradient
-  #   card_background_value: "linear-gradient(135deg, #FFE4E1 0%, #FFF0F5 100%)"
-  #   
-  #   card_background_type: image
-  #   card_background_value: "card_bg"  # 图片文件名(不含扩展名，放在 assets/images/backgrounds/)
-  #   图片会自动使用 cover 模式填满整个卡片容器
-  card_background_type: solid
-  card_background_value: "rgba(255, 255, 255, 0.6)"  # 默认半透明白色
+  template: "romantic"                 # 模板名称: romantic
+
+  # 图标配置 - 支持两种方式：
+  # 方式1: 使用本地图片（自动转base64）
+  # icon_url: "romantic-icon"          # 使用 assets/images/romantic-icon.png
+  #
+  # 方式2: 使用外部URL（推荐，避免邮件过大）
+  # icon_url: "https://your-cdn.com/icon.png"
+  icon_url: "romantic-icon"
+
+  # 背景配置 - 支持两种方式：
+  # 方式1: 渐变色
+  background_type: "gradient"          # gradient 或 image
+  background_image: "romantic"         # gradient时使用 romantic/nature/city
+  #
+  # 方式2: 图片背景（使用外部URL）
+  # background_type: "image"
+  # background_image: "https://your-cdn.com/bg.png"
