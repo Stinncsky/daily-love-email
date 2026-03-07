@@ -182,6 +182,18 @@ def main():
     else:
         days, months, years = 0, 0, 0
 
+    # Calculate total days for display (not remainder days after removing months/years)
+    start_date_str = cfg.get("love", {}).get("start_date")
+    if start_date_str:
+        try:
+            from datetime import datetime
+            sd = datetime.strptime(start_date_str, "%Y-%m-%d").date()
+            total_days = (date.today() - sd).days
+        except Exception:
+            total_days = days  # fallback to remainder days if parsing fails
+    else:
+        total_days = days
+
     # Get weather
     weather_cfg = cfg.get("weather", {})
     city = weather_cfg.get("city") or cfg.get("weather", {}).get("city") or cfg.get("location", "")
@@ -194,7 +206,7 @@ def main():
 
     
     # Build context and render email (using romantic.html template)
-    context = build_context(cfg, days, months, years, weather, quote, anniversary)
+    context = build_context(cfg, total_days, months, years, weather, quote, anniversary)
     body = render_email(context) if callable(render_email) else ""
 
     
