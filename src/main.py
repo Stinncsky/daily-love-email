@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Daily Love Email - Main Script
+Daily Love Email - Main Script (Simplified)
 
 This script orchestrates the daily love email workflow:
 1. Load configuration
@@ -8,7 +8,7 @@ This script orchestrates the daily love email workflow:
 3. Get weather
 4. Select random quote
 5. Find next anniversary
-6. Render email template
+6. Render email template (using romantic.html with direct URLs)
 7. Send email
 """
 
@@ -44,8 +44,9 @@ try:
 except Exception:
     get_random_quote = None
 
+# Use simplified template renderer for romantic.html
 try:
-    from template import render_email  # type: ignore
+    from template_simple import render_email  # type: ignore
 except Exception:
     render_email = None
 
@@ -104,14 +105,6 @@ def load_config_safe():
             "subject": os.environ.get("EMAIL_SUBJECT", "Daily Love Email"),
             "start_date": os.environ.get("LOVE_START_DATE"),
         }
-        if "app" not in cfg:
-            cfg["app"] = {}
-        if "CARD_BACKGROUND_TYPE" in os.environ:
-            cfg["app"].setdefault("card_background_type", os.environ["CARD_BACKGROUND_TYPE"])
-        if "CARD_BACKGROUND_VALUE" in os.environ:
-            cfg["app"].setdefault("card_background_value", os.environ["CARD_BACKGROUND_VALUE"])
-        if "ICON_URL" in os.environ:
-            cfg["app"].setdefault("icon_url", os.environ["ICON_URL"])
     return cfg
 
 
@@ -163,7 +156,6 @@ def build_context(cfg, days, months, years, weather, quote, anniversary):
         "sender_name": email_cfg.get("sender_name", ""),
         "recipient_name": email_cfg.get("recipient_name", ""),
         "recipient_city": weather_cfg.get("city", ""),
-        "template_name": cfg.get("app", {}).get("template", "email_new"),
     }
 
 
@@ -183,26 +175,25 @@ def main():
         return 1
 
     
-    # Fix 1: unpack days/months/years from calculate_days_together
+    # Calculate days together
     calc_result = safe_call(calculate_days_together, cfg.get("love", {}).get("start_date"))
     if isinstance(calc_result, tuple) and len(calc_result) == 3:
         days, months, years = calc_result
     else:
         days, months, years = 0, 0, 0
 
-    # Fix 2 & 6: weather call uses nested config, and proper city selection
+    # Get weather
     weather_cfg = cfg.get("weather", {})
     city = weather_cfg.get("city") or cfg.get("weather", {}).get("city") or cfg.get("location", "")
     api_key = weather_cfg.get("api_key")
     weather = safe_call(get_weather, city, api_key) if city else None
 
     quote = safe_call(get_random_quote)
-    # Fix 3: anniversaries from nested config
     anniversaries_list = cfg.get("anniversaries", [])
     anniversary = safe_call(get_next_anniversary, anniversaries_list) if anniversaries_list else None
 
     
-    # Fix 4/5: build_context now accepts months and years, and updated call site
+    # Build context and render email (using romantic.html template)
     context = build_context(cfg, days, months, years, weather, quote, anniversary)
     body = render_email(context) if callable(render_email) else ""
 

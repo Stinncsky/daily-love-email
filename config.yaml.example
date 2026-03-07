@@ -1,3 +1,7 @@
+# ==========================================
+# 每日恋爱邮件 - 简化配置文件
+# ==========================================
+
 # 邮件配置
 email:
   sender: "your_qq_email@qq.com"      # 发件人QQ邮箱
@@ -27,21 +31,4 @@ weather:
 # 其他配置
 app:
   timezone: "Asia/Shanghai"
-  template: "romantic"                 # 模板名称: romantic
-
-  # 图标配置 - 支持两种方式：
-  # 方式1: 使用本地图片（自动转base64）
-  # icon_url: "romantic-icon"          # 使用 assets/images/romantic-icon.png
-  #
-  # 方式2: 使用外部URL（推荐，避免邮件过大）
-  # icon_url: "https://your-cdn.com/icon.png"
-  icon_url: "romantic-icon"
-
-  # 背景配置 - 支持两种方式：
-  # 方式1: 渐变色
-  background_type: "gradient"          # gradient 或 image
-  background_image: "romantic"         # gradient时使用 romantic/nature/city
-  #
-  # 方式2: 图片背景（使用外部URL）
-  # background_type: "image"
-  # background_image: "https://your-cdn.com/bg.png"
+  template: "romantic"                 # 固定使用 romantic 模板
