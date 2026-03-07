@@ -1,10 +1,10 @@
 name: Daily Love Email
 
 on:
-  # 定时触发：每天 UTC 8:00 (北京时间 16:00)
+  # 定时触发：每天 UTC 0:00 (北京时间 8:00)
   schedule:
-    - cron: '*/5 * * * *'  # 临时测试：每5分钟触发（测试后改回 '0 8 * * *'）
-  
+    - cron: '0 0 * * *'  # 每天北京时间早上8点触发
+
   # 手动触发：在 Actions 页面点击 "Run workflow"
   workflow_dispatch:
     inputs:

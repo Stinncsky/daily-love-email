@@ -2,146 +2,530 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="color-scheme" content="light">
+    <meta name="supported-color-schemes" content="light">
     <title>每日爱情邮件 - {{ today }}</title>
     <style>
         /* Reset styles for email clients */
         body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-        table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-        img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
+        table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse; }
+        img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; display: block; }
 
-        /* Responsive styles */
+        /* Prevent WebKit and Windows mobile changing default text sizes */
+        body, table, td, p, a, li, blockquote { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+
+        /* iOS BLUE LINKS */
+        a[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: none !important;
+            font-size: inherit !important;
+            font-family: inherit !important;
+            font-weight: inherit !important;
+            line-height: inherit !important;
+        }
+
+        /* ANDROID CENTER FIX */
+        div[style*="margin: 16px 0;"] { margin: 0 !important; }
+
+        /* Base styles */
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'WenQuanYi Micro Hei', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -webkit-text-size-adjust: none;
+            -ms-text-size-adjust: none;
+        }
+
+        /* Fluid container */
+        .fluid {
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important;
+        }
+
+        /* Main container - Desktop with background */
+        .main-container {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            border-radius: 20px !important;
+            border: none !important;
+            box-shadow: 0 8px 32px rgba(184, 123, 123, 0.15) !important;
+            overflow: hidden !important;
+        }
+
+        /* Desktop wrapper with gradient */
+        .desktop-wrapper {
+            background: linear-gradient(180deg, #FAD4E4 0%, #FDF6F0 50%, #FFF8F5 100%) !important;
+        }
+
+        /* Mobile background */
+        .mobile-bg {
+            display: none !important;
+        }
+
+        /* Glassmorphism card effect - translucent over background */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.35) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.4) !important;
+            border-radius: 16px !important;
+        }
+
+        /* Days card - deeper romantic pink like reference */
+        .days-card {
+            background: linear-gradient(135deg, rgba(244, 194, 194, 0.85) 0%, rgba(232, 180, 184, 0.85) 100%) !important;
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+            border: none !important;
+            border-radius: 16px !important;
+            box-shadow: 0 6px 24px rgba(184, 123, 123, 0.2) !important;
+            overflow: hidden !important;
+        }
+
+        /* Weather card - sky blue like reference */
+        .weather-card {
+            background: linear-gradient(135deg, rgba(168, 216, 234, 0.75) 0%, rgba(200, 230, 245, 0.75) 100%) !important;
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+            border: none !important;
+            border-radius: 16px !important;
+            box-shadow: 0 6px 24px rgba(120, 180, 210, 0.2) !important;
+            overflow: hidden !important;
+        }
+
+        /* Quote card - soft white/cream like reference */
+        .quote-card {
+            background: rgba(255, 255, 255, 0.7) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            border: none !important;
+            border-radius: 16px !important;
+            box-shadow: 0 6px 24px rgba(184, 123, 123, 0.12) !important;
+            overflow: hidden !important;
+        }
+
+        /* Mobile styles */
         @media only screen and (max-width: 600px) {
-            .container { width: 100% !important; max-width: 100% !important; }
-            .content { padding: 20px !important; }
-            .greeting-text { font-size: 20px !important; }
-            .days-number { font-size: 72px !important; }
-            .quote-text { font-size: 16px !important; }
-            .weather-temp { font-size: 20px !important; }
+            .mobile-padding { padding: 12px !important; }
+            .mobile-padding-sides { padding-left: 12px !important; padding-right: 12px !important; }
+            .mobile-padding-top { padding-top: 30px !important; }
+            .mobile-padding-bottom { padding-bottom: 30px !important; }
+
+            /* Show mobile background, hide desktop wrapper */
+            .mobile-bg {
+                display: table !important;
+                width: 100% !important;
+            }
+            .desktop-wrapper {
+                display: none !important;
+            }
+
+            .container {
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 100% !important;
+            }
+
+            /* Mobile main container - transparent no border */
+            .main-container {
+                background: rgba(255, 255, 255, 0.25) !important;
+                backdrop-filter: blur(3px) !important;
+                -webkit-backdrop-filter: blur(3px) !important;
+                border-radius: 16px !important;
+                border: none !important;
+                overflow: hidden !important;
+            }
+
+            .content { padding: 12px !important; }
+
+            .greeting-text {
+                font-size: 19px !important;
+                letter-spacing: 1px !important;
+                text-shadow: 0 1px 3px rgba(255,255,255,0.8), 0 0 10px rgba(255,255,255,0.5) !important;
+            }
+
+            .days-number { font-size: 64px !important; letter-spacing: -1px !important; }
+            .days-label { font-size: 16px !important; letter-spacing: 2px !important; }
+
+            .quote-text { font-size: 15px !important; line-height: 1.7 !important; padding: 0 5px !important; }
+
+            .weather-temp { font-size: 24px !important; }
+            .weather-condition { font-size: 14px !important; display: block !important; margin-top: 5px !important; }
+            .weather-location { font-size: 13px !important; }
+
+            .card-padding { padding: 20px 16px !important; }
+            .quote-card-padding { padding: 16px !important; }
+
+            .icon-img { width: 70px !important; height: auto !important; }
+
+            .footer-text {
+                font-size: 17px !important;
+                text-shadow: 0 1px 3px rgba(255,255,255,0.8), 0 0 10px rgba(255,255,255,0.5) !important;
+            }
+            .footer-date {
+                font-size: 14px !important;
+                text-shadow: 0 1px 2px rgba(255,255,255,0.8) !important;
+            }
+
+            /* Mobile glass effect - deeper colors matching reference */
+            .days-card {
+                background: linear-gradient(135deg, rgba(244, 194, 194, 0.9) 0%, rgba(232, 180, 184, 0.9) 100%) !important;
+                backdrop-filter: blur(6px) !important;
+                -webkit-backdrop-filter: blur(6px) !important;
+                border: none !important;
+                overflow: hidden !important;
+            }
+
+            .weather-card {
+                background: linear-gradient(135deg, rgba(168, 216, 234, 0.8) 0%, rgba(200, 230, 245, 0.8) 100%) !important;
+                backdrop-filter: blur(6px) !important;
+                -webkit-backdrop-filter: blur(6px) !important;
+                border: none !important;
+                overflow: hidden !important;
+            }
+
+            .quote-card {
+                background: rgba(255, 255, 255, 0.75) !important;
+                backdrop-filter: blur(8px) !important;
+                -webkit-backdrop-filter: blur(8px) !important;
+                border: none !important;
+                overflow: hidden !important;
+            }
+
+            .glass-card {
+                backdrop-filter: blur(6px) !important;
+                -webkit-backdrop-filter: blur(6px) !important;
+                border: none !important;
+                overflow: hidden !important;
+            }
+
+            .mobile-full-width {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            .mobile-stack {
+                display: block !important;
+                width: 100% !important;
+            }
+
+            .mobile-center { text-align: center !important; }
+
+            .mobile-hide { display: none !important; }
+            .mobile-show { display: block !important; }
         }
 
         @media only screen and (max-width: 480px) {
+            .mobile-padding { padding: 10px !important; }
+            .mobile-padding-sides { padding-left: 10px !important; padding-right: 10px !important; }
+
+            .main-container {
+                border-radius: 12px !important;
+            }
+
             .days-number { font-size: 56px !important; }
-            .greeting-text { font-size: 18px !important; }
+            .greeting-text { font-size: 17px !important; }
+
+            .card-padding { padding: 18px 14px !important; }
+            .quote-card-padding { padding: 14px !important; }
+
+            .quote-text { font-size: 14px !important; }
+
+            .weather-temp { font-size: 20px !important; }
+
+            .icon-img { width: 60px !important; }
+        }
+
+        /* Gmail iOS fix */
+        @media only screen and (min-device-width: 375px) and (max-device-width: 812px) and (-webkit-min-device-pixel-ratio: 3) {
+            .container { min-width: 100vw !important; }
         }
     </style>
+    <!--[if mso]>
+    <noscript>
+        <xml>
+            <o:OfficeDocumentSettings>
+                <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+    </noscript>
+    <![endif]-->
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'WenQuanYi Micro Hei', sans-serif; -webkit-font-smoothing: antialiased;">
 
-    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background: linear-gradient(180deg, #FAD4E4 0%, #FDF6F0 50%, #FFF8F5 100%);">
+    <!-- ==================== MOBILE VERSION (Full screen background) ==================== -->
+    <table role="presentation" class="mobile-bg" border="0" cellpadding="0" cellspacing="0" width="100%" style="display: none; background: linear-gradient(180deg, #FAD4E4 0%, #FDF6F0 50%, #FFF8F5 100%);">
+        <tr>
+            <td background="{{ background_image_url|default('') }}" style="background-image: url('{{ background_image_url|default('') }}'); background-size: cover; background-position: center center; background-repeat: no-repeat; min-height: 100vh;" align="center" valign="top">
+
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td align="center" style="padding: 40px 10px;" class="mobile-padding">
+
+                            <table role="presentation" class="container main-container" border="0" cellpadding="0" cellspacing="0" width="560" style="max-width: 560px; width: 100%;">
+
+                                <!-- Icon Section -->
+                                <tr>
+                                    <td style="text-align: center; padding-top: 30px; padding-bottom: 15px;" class="mobile-padding-top">
+                                        <img src="{{ icon_url|default('') }}" alt="" class="icon-img" style="width: 80px; height: auto; display: inline-block; border: 0; outline: none;">
+                                    </td>
+                                </tr>
+
+                                <!-- Greeting Section -->
+                                <tr>
+                                    <td class="content mobile-padding-sides" style="padding: 10px 40px 25px; text-align: center;">
+                                        <p class="greeting-text" style="margin: 0 0 8px; color: #5C4A3D; font-size: 24px; font-weight: 500; letter-spacing: 2px; text-shadow: 0 1px 2px rgba(255,255,255,0.5);">亲爱的 {{ recipient_name }}</p>
+                                        <p style="margin: 0; color: #8B7355; font-size: 14px; letter-spacing: 1px; text-shadow: 0 1px 2px rgba(255,255,255,0.5);">{{ today }}</p>
+                                    </td>
+                                </tr>
+
+                                <!-- Days Together Section -->
+                                <tr>
+                                    <td style="padding: 0 30px 20px;" class="mobile-padding-sides">
+                                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                            <tr>
+                                                <td class="days-card card-padding" style="padding: 35px 30px; text-align: center;">
+                                                    <p style="margin: 0 0 15px; color: rgba(92, 74, 61, 0.85); font-size: 20px; letter-spacing: 3px; font-weight: 500;">我们已经相爱了</p>
+                                                    <div class="days-number" style="font-size: 88px; font-weight: 700; color: #5C4A3D; line-height: 1; margin: 0; letter-spacing: -2px; text-shadow: 0 2px 4px rgba(255, 255, 255, 0.5);">{{ days_together }}</div>
+                                                    <p class="days-label" style="margin: 10px 0 0; color: #5C4A3D; font-size: 18px; font-weight: 500; letter-spacing: 4px;">天</p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+
+                                {% if weather %}
+                                <!-- Weather Section -->
+                                <tr>
+                                    <td style="padding: 0 30px 20px;" class="mobile-padding-sides">
+                                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                            <tr>
+                                                <td class="weather-card card-padding" style="padding: 25px 30px;">
+                                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                        <tr>
+                                                            <td style="padding-bottom: 12px; text-align: center;">
+                                                                <span class="weather-location" style="font-size: 14px; color: #5C4A3D; letter-spacing: 1px;">📍 {{ recipient_city }} 今天</span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="text-align: center;">
+                                                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center">
+                                                                    <tr>
+                                                                        <td style="font-size: 20px; color: #5C4A3D; padding-right: 8px;">🌡️</td>
+                                                                        <td class="weather-temp" style="font-size: 28px; font-weight: 700; color: #5C4A3D; letter-spacing: 1px;">{{ weather.temp_min|round|int }}° / {{ weather.temp_max|round|int }}°</td>
+                                                                        <td class="weather-condition" style="font-size: 16px; color: #5C4A3D; padding-left: 8px;">{{ weather.condition }}</td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                {% endif %}
+
+                                <!-- Quote Section -->
+                                <tr>
+                                    <td style="padding: 0 30px 16px;" class="mobile-padding-sides">
+                                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                            <tr>
+                                                 <td class="quote-card quote-card-padding" style="padding: 14px 22px;">
+                                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                        <tr>
+                                                            <td style="padding-bottom: 8px;">
+                                                                <span style="font-size: 36px; color: #B87B7B; line-height: 1; font-family: Georgia, serif; opacity: 0.8;">"</span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                 <p class="quote-text" style="margin: 0; color: #5C4A3D; font-size: 17px; line-height: 1.7; font-style: italic; text-align: center; padding: 0 8px;">
+                                                                    {{ quote.content }}
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="padding-top: 8px; text-align: right;">
+                                                                <span style="font-size: 36px; color: #B87B7B; line-height: 1; font-family: Georgia, serif; opacity: 0.8;">"</span>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+
+                                <!-- Divider Section -->
+                                <tr>
+                                    <td style="padding: 10px 30px 25px; text-align: center;" class="mobile-padding-sides">
+                                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center">
+                                            <tr>
+                                                <td style="color: #B87B7B; font-size: 32px; letter-spacing: 0px; opacity: 0.8;">
+                                                    ─── ♥ ───
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+
+                                <!-- Footer Section -->
+                                <tr>
+                                    <td style="padding: 0 30px 40px; text-align: center;" class="mobile-padding-sides mobile-padding-bottom">
+                                        <p class="footer-text" style="margin: 0 0 8px; color: #5C4A3D; font-size: 20px; font-weight: 500; letter-spacing: 1px; text-shadow: 0 1px 2px rgba(255,255,255,0.5);">爱你的, {{ sender_name }}</p>
+                                        <p class="footer-date" style="margin: 0; color: #8B7355; font-size: 18px; text-shadow: 0 1px 2px rgba(255,255,255,0.5);">{{ today }}</p>
+                                    </td>
+                                </tr>
+
+                            </table>
+
+                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr><td style="height: 20px;"></td></tr>
+                            </table>
+
+                        </td>
+                    </tr>
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+    <!-- ==================== DESKTOP VERSION (Card with background) ==================== -->
+    <table role="presentation" class="desktop-wrapper" border="0" cellpadding="0" cellspacing="0" width="100%" style="background: linear-gradient(180deg, #FAD4E4 0%, #FDF6F0 50%, #FFF8F5 100%);">
         <tr>
             <td align="center" style="padding: 40px 20px;">
 
-                <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="560" background="{{ background_image_url|default('') }}" style="max-width: 560px; background-image: url('{{ background_image_url|default('') }}'); background-size: cover; background-position: center; background-repeat: no-repeat; background-color: rgba(255, 255, 255, 0.95); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 32px rgba(184, 123, 123, 0.15);">
+                <!-- Main Card Container with Background -->
+                <table role="presentation" class="container main-container" border="0" cellpadding="0" cellspacing="0" width="560" background="{{ background_image_url|default('') }}" style="max-width: 560px; width: 100%; background-image: url('{{ background_image_url|default('') }}'); background-size: cover; background-position: center; background-repeat: no-repeat;">
 
-                    <tr>
-                        <td style="text-align: center; padding-top: 40px; padding-bottom: 10px;">
-                            <img src="{{ icon_url|default('') }}" alt="" style="width: 80px; height: auto; display: inline-block;">
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td class="content" style="padding: 10px 40px 20px; text-align: center;">
-                            <p class="greeting-text" style="margin: 0 0 8px; color: #5C4A3D; font-size: 24px; font-weight: 500; letter-spacing: 2px;">亲爱的 {{ recipient_name }}</p>
-                            <p style="margin: 0; color: #8B7355; font-size: 14px; letter-spacing: 1px;">{{ today }}</p>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td style="padding: 0 30px 20px;">
-                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <!-- Icon Section -->
                                 <tr>
-                                    <td style="background: linear-gradient(135deg, #F4C2C2 0%, #E8B4B8 100%); border-radius: 16px; padding: 35px 30px; text-align: center; box-shadow: 0 4px 15px rgba(232, 180, 184, 0.3);">
-                                        <p style="margin: 0 0 15px; color: rgba(92, 74, 61, 0.8); font-size: 20px; letter-spacing: 3px; font-weight: 500;">我们已经相爱了</p>
-                                        <div class="days-number" style="font-size: 88px; font-weight: 700; color: #5C4A3D; line-height: 1; margin: 0; letter-spacing: -2px; text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.3);">{{ days_together }}</div>
-                                        <p style="margin: 10px 0 0; color: #5C4A3D; font-size: 18px; font-weight: 500; letter-spacing: 4px;">天</p>
+                                    <td style="text-align: center; padding-top: 30px; padding-bottom: 15px;" class="mobile-padding-top">
+                                        <img src="{{ icon_url|default('') }}" alt="" class="icon-img" style="width: 80px; height: auto; display: inline-block; border: 0; outline: none;">
                                     </td>
                                 </tr>
-                            </table>
-                        </td>
-                    </tr>
 
-                    {% if weather %}
-                    <tr>
-                        <td style="padding: 0 30px 20px;">
-                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <!-- Greeting Section -->
                                 <tr>
-                                    <td style="background: linear-gradient(135deg, #A8D8EA 0%, #B8E6F0 100%); border-radius: 16px; padding: 25px 30px; box-shadow: 0 4px 15px rgba(168, 216, 234, 0.3);">
+                                    <td class="content mobile-padding-sides" style="padding: 10px 40px 25px; text-align: center;">
+                                        <p class="greeting-text" style="margin: 0 0 8px; color: #5C4A3D; font-size: 24px; font-weight: 500; letter-spacing: 2px; text-shadow: 0 1px 2px rgba(255,255,255,0.5);">亲爱的 {{ recipient_name }}</p>
+                                        <p style="margin: 0; color: #8B7355; font-size: 14px; letter-spacing: 1px; text-shadow: 0 1px 2px rgba(255,255,255,0.5);">{{ today }}</p>
+                                    </td>
+                                </tr>
+
+                                <!-- Days Together Section -->
+                                <tr>
+                                    <td style="padding: 0 30px 20px;" class="mobile-padding-sides">
                                         <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                                             <tr>
-                                                <td style="padding-bottom: 15px; text-align: center;">
-                                                    <span style="font-size: 14px; color: #5C4A3D; letter-spacing: 1px;">📍 {{ recipient_city }} 今天</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td style="text-align: center;">
-                                                    <span style="font-size: 20px; color: #5C4A3D; margin-right: 8px;">🌡️</span>
-                                                    <span class="weather-temp" style="font-size: 28px; font-weight: 700; color: #5C4A3D; letter-spacing: 1px;">{{ weather.temp_min|round|int }}° / {{ weather.temp_max|round|int }}°</span>
-                                                    <span style="font-size: 16px; color: #5C4A3D; margin-left: 8px;">{{ weather.condition }}</span>
+                                                <td class="days-card card-padding" style="padding: 35px 30px; text-align: center;">
+                                                    <p style="margin: 0 0 15px; color: rgba(92, 74, 61, 0.85); font-size: 20px; letter-spacing: 3px; font-weight: 500;">我们已经相爱了</p>
+                                                    <div class="days-number" style="font-size: 88px; font-weight: 700; color: #5C4A3D; line-height: 1; margin: 0; letter-spacing: -2px; text-shadow: 0 2px 4px rgba(255, 255, 255, 0.5);">{{ days_together }}</div>
+                                                    <p class="days-label" style="margin: 10px 0 0; color: #5C4A3D; font-size: 18px; font-weight: 500; letter-spacing: 4px;">天</p>
                                                 </td>
                                             </tr>
                                         </table>
                                     </td>
                                 </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    {% endif %}
 
-                    <tr>
-                        <td style="padding: 0 30px 16px;">
-                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                {% if weather %}
+                                <!-- Weather Section -->
                                 <tr>
-                                     <td style="background: rgba(255, 255, 255, 0.85); border-radius: 16px; padding: 14px 22px; box-shadow: 0 4px 20px rgba(184, 123, 123, 0.1); border: 1px solid rgba(255, 255, 255, 0.5);">
+                                    <td style="padding: 0 30px 20px;" class="mobile-padding-sides">
                                         <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                                             <tr>
-                                                <td style="padding-bottom: 10px;">
-                                                    <span style="font-size: 36px; color: #E8B4B8; line-height: 1; font-family: Georgia, serif; opacity: 0.6;">"</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                     <p class="quote-text" style="margin: 0; color: #5C4A3D; font-size: 18px; line-height: 1.6; font-style: italic; text-align: center; padding: 0 10px;">
-                                                        {{ quote.content }}
-                                                    </p>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td style="padding-top: 10px; text-align: right;">
-                                                    <span style="font-size: 36px; color: #E8B4B8; line-height: 1; font-family: Georgia, serif; opacity: 0.6;">"</span>
+                                                <td class="weather-card card-padding" style="padding: 25px 30px;">
+                                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                        <tr>
+                                                            <td style="padding-bottom: 12px; text-align: center;">
+                                                                <span class="weather-location" style="font-size: 14px; color: #5C4A3D; letter-spacing: 1px;">📍 {{ recipient_city }} 今天</span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="text-align: center;">
+                                                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center">
+                                                                    <tr>
+                                                                        <td style="font-size: 20px; color: #5C4A3D; padding-right: 8px;">🌡️</td>
+                                                                        <td class="weather-temp" style="font-size: 28px; font-weight: 700; color: #5C4A3D; letter-spacing: 1px;">{{ weather.temp_min|round|int }}° / {{ weather.temp_max|round|int }}°</td>
+                                                                        <td class="weather-condition" style="font-size: 16px; color: #5C4A3D; padding-left: 8px;">{{ weather.condition }}</td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
                                                 </td>
                                             </tr>
                                         </table>
                                     </td>
                                 </tr>
-                            </table>
-                        </td>
-                    </tr>
+                                {% endif %}
 
-                    <tr>
-                        <td style="padding: 0 30px 25px; text-align: center;">
-                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
+                                <!-- Quote Section -->
                                 <tr>
-                                    <td style="color: #B87B7B; font-size: 35px; letter-spacing: 0px;">
-                                        ───── ♥ ─────
+                                    <td style="padding: 0 30px 16px;" class="mobile-padding-sides">
+                                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                            <tr>
+                                                 <td class="quote-card quote-card-padding" style="padding: 14px 22px;">
+                                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                        <tr>
+                                                            <td style="padding-bottom: 8px;">
+                                                                <span style="font-size: 36px; color: #B87B7B; line-height: 1; font-family: Georgia, serif; opacity: 0.8;">"</span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                 <p class="quote-text" style="margin: 0; color: #5C4A3D; font-size: 17px; line-height: 1.7; font-style: italic; text-align: center; padding: 0 8px;">
+                                                                    {{ quote.content }}
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="padding-top: 8px; text-align: right;">
+                                                                <span style="font-size: 36px; color: #B87B7B; line-height: 1; font-family: Georgia, serif; opacity: 0.8;">"</span>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </td>
                                 </tr>
+
+                                <!-- Divider Section -->
+                                <tr>
+                                    <td style="padding: 10px 30px 25px; text-align: center;" class="mobile-padding-sides">
+                                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center">
+                                            <tr>
+                                                <td style="color: #B87B7B; font-size: 32px; letter-spacing: 0px; opacity: 0.8;">
+                                                    ─── ♥ ───
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+
+                                <!-- Footer Section -->
+                                <tr>
+                                    <td style="padding: 0 30px 40px; text-align: center;" class="mobile-padding-sides mobile-padding-bottom">
+                                        <p class="footer-text" style="margin: 0 0 8px; color: #5C4A3D; font-size: 20px; font-weight: 500; letter-spacing: 1px; text-shadow: 0 1px 2px rgba(255,255,255,0.5);">爱你的, {{ sender_name }}</p>
+                                        <p class="footer-date" style="margin: 0; color: #8B7355; font-size: 18px; text-shadow: 0 1px 2px rgba(255,255,255,0.5);">{{ today }}</p>
+                                    </td>
+                                </tr>
+
                             </table>
+
+                            <!-- Bottom Spacer -->
+                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr><td style="height: 20px;"></td></tr>
+                            </table>
+
                         </td>
                     </tr>
-
-                    <tr>
-                        <td style="padding: 0 30px 40px; text-align: center;">
-                            <p style="margin: 0 0 8px; color: #5C4A3D; font-size: 20px; font-weight: 500; letter-spacing: 1px;">爱你的, {{ sender_name }}</p>
-                            <p style="margin: 0; color: #8B7355; font-size: 18px;">{{ today }}</p>
-                        </td>
-                    </tr>
-
-                </table>
-
-                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-                    <tr><td style="height: 40px;"></td></tr>
                 </table>
 
             </td>
