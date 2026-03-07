@@ -10,7 +10,7 @@
 
 **每日恋爱邮件** 是一个基于 Python 的自动化邮件发送项目，通过 GitHub Actions 定时执行，每天为伴侣发送包含恋爱天数、天气预报、每日情话和纪念日提醒的温暖邮件。
 
-**技术栈**: Python 3.10+ · GitHub Actions · SMTP · OpenWeatherMap API
+**技术栈**: Python 3.10+ · GitHub Actions · SMTP · 高德地图天气 API
 
 ---
 
@@ -25,18 +25,21 @@ auto-email/
 │   ├── template.py        # 模板渲染
 │   ├── calculator.py      # 恋爱天数计算
 │   ├── anniversary.py     # 纪念日处理
-│   ├── weather.py         # 天气获取
+│   ├── weather.py         # 天气获取（高德API）
+│   ├── city_code.py       # 城市编码映射
 │   ├── quotes.py          # 每日情话
 │   ├── background.py      # 背景处理
 │   ├── performance.py     # 性能监控
 │   └── monitoring.py      # 运行监控
 ├── tests/                 # 单元测试 (pytest)
 ├── scripts/               # 辅助脚本
-│   └── generate_email.py  # 邮件预览生成
+│   ├── generate_email.py  # 邮件预览生成
+│   └── convert_excel_to_json.py  # Excel转JSON工具
 ├── templates/             # Jinja2 邮件模板
 ├── assets/                # 静态资源 (图片等)
 ├── data/                  # 数据文件
-│   └── quotes.json        # 情话库
+│   ├── quotes.json        # 情话库
+│   └── city_codes.json    # 城市编码库
 ├── docs/                  # 项目文档
 ├── .github/workflows/     # GitHub Actions 配置
 │   └── daily-email.yml    # 定时任务
@@ -60,7 +63,8 @@ auto-email/
 | 模板渲染 | `src/template.py` | Jinja2 模板处理 | `render_email()` |
 | 天数计算 | `src/calculator.py` | 计算恋爱天数/月数/年数 | `calculate_days_together()` |
 | 纪念日 | `src/anniversary.py` | 查找下一个纪念日 | `get_next_anniversary()` |
-| 天气获取 | `src/weather.py` | OpenWeatherMap API 调用 | `get_weather()` |
+| 天气获取 | `src/weather.py` | 高德天气 API 调用 | `get_weather()` |
+| 城市编码 | `src/city_code.py` | 城市名称转 adcode | `get_adcode()` |
 | 每日情话 | `src/quotes.py` | 随机选择情话 | `get_random_quote()` |
 
 ### 测试模块
@@ -69,7 +73,8 @@ auto-email/
 |----------|----------|
 | `tests/test_calculator.py` | 恋爱天数计算逻辑 |
 | `tests/test_anniversary.py` | 纪念日处理逻辑 |
-| `tests/test_weather.py` | 天气 API 调用 |
+| `tests/test_weather.py` | 天气 API 调用（高德） |
+| `tests/test_city_code.py` | 城市编码映射 |
 | `tests/test_quotes.py` | 情话获取 |
 | `tests/test_email_sender.py` | 邮件发送功能 |
 | `tests/test_config.py` | 配置加载 |

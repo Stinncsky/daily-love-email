@@ -25,8 +25,8 @@ anniversaries:
 
 # 天气配置
 weather:
-  city: "Beijing"                      # 城市名称（英文）
-  api_key: "your_openweathermap_api_key"
+  city: "北京市"                       # 城市名称（中文，如"北京市"、"上海"）
+  api_key: "your_amap_api_key"         # 高德地图API Key
 
 # 其他配置
 app:
