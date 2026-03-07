@@ -51,3 +51,7 @@ jobs:
           DRY_RUN: ${{ github.event.inputs.dry_run }}
           CARD_BACKGROUND_TYPE: ${{ secrets.CARD_BACKGROUND_TYPE }}
           CARD_BACKGROUND_VALUE: ${{ secrets.CARD_BACKGROUND_VALUE }}
+          ICON_URL: ${{ secrets.ICON_URL }}
+          GITHUB_REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+          GITHUB_BRANCH: ${{ github.ref_name }}
+          USE_IMAGE_URL: "true"
